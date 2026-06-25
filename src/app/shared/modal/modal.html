@@ -1,0 +1,20 @@
+@if (IsOpen()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    (click)="closeModal()">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6"
+      (click)="$event.stopPropagation()">
+      <div class="mb-4">
+        <ng-content select="[modal-header]" />
+      </div>
+
+      <div class="mb-4">
+        <ng-content select="[modal-body]" />
+      </div>
+
+      <div class="flex justify-end gap-2">
+        <ng-content select="[modal-footer]" />
+      </div>
+    </div>
+  </div>
+}
