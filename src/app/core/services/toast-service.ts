@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Toast } from '../shared/models/toast';
+import { Toast } from '../../shared/models/toast';
 import { NgClass } from '@angular/common';
 
 @Injectable({

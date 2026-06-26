@@ -3,7 +3,8 @@ export interface accessTokenPayload{
     sub : string, 
     email : string,
     name : string,
-    role : 'admin' | 'manager' | 'employee';
+    role : 'Admin' | 'Manager' | 'Employee',
+    exp : number
 }
 
 export interface logInRequest{

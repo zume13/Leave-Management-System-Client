@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Modal } from '../../modal/modal';
+import { AuthService } from '../../../core/services/auth-service';
 
 @Component({
   selector: 'app-header',
@@ -8,13 +9,8 @@ import { Modal } from '../../modal/modal';
   styleUrl: './header.css',
 })
 export class Header {
-  readonly mobileMenuOpen = signal(false);
-  
-  toggleMenu(){
-     this.mobileMenuOpen.update(open => !open);
-  } 
+  auth = inject(AuthService)
 
-  closeMenu(){
-    this.mobileMenuOpen.set(false)
-  }
+  showProfile = signal<boolean>(this.auth.isLoggedIn())
+
 }

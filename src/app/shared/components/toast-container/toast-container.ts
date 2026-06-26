@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ToastService } from '../../../services/toast-service';
+import { ToastService } from '../../../core/services/toast-service';
 import { NgClass } from '@angular/common';
 
 @Component({
@@ -26,9 +26,5 @@ export class ToastContainer {
         return 'bg-sky-500';
     }
     
-  }
-
-  button(){
-    this.toastService.show("Internal Server Error.", 'info');
   }
 }
