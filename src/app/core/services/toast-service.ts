@@ -24,7 +24,7 @@ export class ToastService {
   }, duration);
  }
 
- remove(id : string){
+ private remove(id : string){
   this.toast.update(current => current.filter(t => t.id !== id));
  }
 }
