@@ -1,3 +1,26 @@
+<app-modal class="font-stack" [IsOpen]="showModal()" (close)="closeModal()">
+
+    <div modal-header>
+        <h2 class="text-xl font-semibold text-center">Unverified Email</h2>
+    </div>
+
+    <div modal-body class="text-center text-lg">
+    <p>Please check your inbox to verify your email.</p>
+  </div>
+
+  <div modal-footer class="flex flex-row gap-2">
+    <button
+      class="px-3 py-1 text-sm bg-gray-200 rounded"
+      (click)="closeModal()">
+      Close
+    </button>
+  </div>
+
+</app-modal>
+
+<app-toast-container>
+</app-toast-container>
+
 <div class="min-h-[calc(100dvh-64px)] bg-gray-100 flex items-center justify-center px-4">
 
   <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">

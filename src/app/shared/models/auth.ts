@@ -36,3 +36,8 @@ export interface ProblemDetails {
   status: number;
   detail: string;
 }
+
+export interface DepartmentResponse{
+    id : string,
+    name : string
+}

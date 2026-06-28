@@ -21,10 +21,6 @@ export const routes: Routes = [
         loadComponent : () => import('./features/auth/register/register').then(m => m.Register)
     },
     {
-        path : '**',
-        loadComponent : () => import('./features/auth/not-found/not-found').then(m => m.NotFound)
-    },
-    {
         path: 'admin/dashboard',
         canActivate : [authGuardGuard, adminGuardGuard],
         loadComponent : () => import('./features/dashboards/admin/admin').then(m => m.Admin)
@@ -34,5 +30,9 @@ export const routes: Routes = [
         path : 'employee/dashboard',
         canActivate : [authGuardGuard, employeeGuardGuard],
         loadComponent : () => import('./features/dashboards/employee/employee').then(m => m.Employee)
+    },
+        {
+        path : '**',
+        loadComponent : () => import('./features/auth/not-found/not-found').then(m => m.NotFound)
     }
 ];

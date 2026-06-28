@@ -6,3 +6,7 @@ html, body{
     height: 100%;
     margin: 0;
 }
+
+@theme {
+  --font-stack: "Stack Sans Text", sans-serif;
+}

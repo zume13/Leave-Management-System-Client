@@ -2,14 +2,16 @@ import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, Validator, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth-service';
 import { accessTokenPayload, logInRequest, ProblemDetails } from '../../../shared/models/auth';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../../core/services/toast-service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { jwtDecode } from 'jwt-decode';
+import { Modal } from '../../../shared/modal/modal';
+import { ToastContainer } from '../../../shared/components/toast-container/toast-container';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink, Modal, ToastContainer],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -23,6 +25,7 @@ export class Login {
   router = inject(Router)
   builder = new FormBuilder();
   showPass = signal<boolean>(false);
+  showModal = signal<boolean>(false);
 
   LogInForm = this.builder.nonNullable.group({
     email : ['', [Validators.required, Validators.email]],
@@ -34,6 +37,10 @@ export class Login {
 
   togglePassVisibility(){
     this.showPass.update(value => !value);
+  }
+
+  closeModal(){
+    this.showModal.update(value => !value);
   }
 
   login(){
@@ -58,11 +65,25 @@ export class Login {
         this.toast.show('Logged In Succesfully', 'info');
         this.router.navigateByUrl(this.returnUrl);
 
-        this.LogInForm.reset
+        this.LogInForm.reset();
       }, 
       error : (err : HttpErrorResponse) =>  {
         const problem = err.error as ProblemDetails
-        this.errorMessage.set(problem.detail) 
+
+        switch (problem.detail) {
+          case 'Invalid email or password':
+            this.errorMessage.set(problem.detail) 
+            break;
+
+          case "The user's email was not verified":
+            this.showModal.update(value => !value);
+            break;
+
+          default:
+            this.toast.show('An unexpected error occured.', 'error');
+            break;
+        }
+        
       }
     })
   }
