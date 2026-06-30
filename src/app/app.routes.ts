@@ -27,11 +27,40 @@ export const routes: Routes = [
         
     },
     {
+        path : 'admin/employees',
+        canActivate : [authGuardGuard, adminGuardGuard],
+        loadComponent : () => import('./features/employees/employee-list-container/employee-list-container').then(m => m.EmployeeListContainer)
+    },
+    {
+        path : 'admin/requests',
+        canActivate : [authGuardGuard, adminGuardGuard],
+        loadComponent : () => import('./features/requests/request-container/request-container').then(m => m.RequestContainer)
+    },
+    {
+        path : 'admin/leaves',
+        canActivate : [authGuardGuard, adminGuardGuard],
+        loadComponent : () => import('./features/leaves/leave-container/leave-container').then(m => m.LeaveContainer)
+    },
+    {
         path : 'employee/dashboard',
         canActivate : [authGuardGuard, employeeGuardGuard],
         loadComponent : () => import('./features/dashboards/employee/employee').then(m => m.Employee)
     },
-        {
+    {
+        path : 'employee/requests',
+        canActivate : [authGuardGuard, employeeGuardGuard],
+        loadComponent : () =>  import('./features/requests/request-container/request-container').then(m => m.RequestContainer)
+    },
+    {
+        path : 'employee/allocations',
+        canActivate : [authGuardGuard, employeeGuardGuard],
+        loadComponent : () => import('./features/allocations/allocation-list-container/allocation-list-container').then(m => m.AllocationListContainer)
+    },
+    {
+        path : 'verify-email',
+        loadComponent : () => import('./features/auth/email-verification/email-verification').then(m => m.EmailVerification)
+    },
+    {
         path : '**',
         loadComponent : () => import('./features/auth/not-found/not-found').then(m => m.NotFound)
     }

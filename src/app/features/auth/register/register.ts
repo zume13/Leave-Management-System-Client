@@ -5,6 +5,8 @@ import { AuthService } from '../../../core/services/auth-service';
 import { ToastService } from '../../../core/services/toast-service';
 import { Modal } from '../../../shared/modal/modal';
 import { ToastContainer } from '../../../shared/components/toast-container/toast-container';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ProblemDetails } from '../../../shared/models/auth';
 
 @Component({
   selector: 'app-register',
@@ -42,18 +44,22 @@ export class Register {
   });
 
  register(){
+
   this.auth.register({
-    name : this.regForm.controls['fullName'].value,
-    email : this.regForm.controls['email'].value,
-    password : this.regForm.controls['password'].value,
-    deptId : this.regForm.controls['department'].value
+    
+    Email : this.regForm.controls['email'].value,
+    EmployeeName : this.regForm.controls['fullName'].value,
+    Password : this.regForm.controls['password'].value,
+    DepartmentId : this.regForm.controls['department'].value
   }).subscribe({
     next : () => {
-      this.showModal();
+      this.open();
       this.regForm.reset();
     },
-    error : () => {
-      this.toast.show("Unexpected error occured", "error");
+    error : (err : HttpErrorResponse) => {
+      const problem = err.error as ProblemDetails
+
+      this.toast.show(`${problem.detail}`, "error");
     }
   })
  }

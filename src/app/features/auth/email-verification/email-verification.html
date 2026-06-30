@@ -1,0 +1,37 @@
+<app-modal [IsOpen]="showModal()" (close)="closeModal()" class="font-stack">
+
+  <div modal-header>
+    <h2 class="text-xl text-center font-semibold text-red-600">
+      Email Verification Failed
+    </h2>
+  </div>
+
+  <div modal-body>
+
+    <p class="text-center text-gray-700">
+      We couldn't verify your email address. <br> The verification link may have
+      expired, already been used, or is invalid.
+    </p>
+
+  </div>
+
+  <div modal-footer class="flex flex-row w-full justify-between">
+    <button
+      class="rounded-md bg-emerald-600 text-sm px-4 py-2 text-white hover:bg-emerald-700"
+      (click)="resendVerificationEmail()"
+    >
+      Resend Verification Email
+    </button>
+
+    <button
+      class="rounded-md border text-sm border-gray-300 px-4 py-2 hover:bg-gray-100"
+      (click)="closeModal()"
+    >
+      Close
+    </button>
+  </div>
+
+</app-modal>
+
+<app-toast-container>
+</app-toast-container>

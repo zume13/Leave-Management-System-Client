@@ -1,9 +1,9 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { User } from '../../shared/models/auth';
 import { jwtDecode } from 'jwt-decode'
 import { accessTokenPayload, authResponse, logInRequest, registerRequest } from '../../shared/models/auth';
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { firstValueFrom, tap } from 'rxjs';
 
 @Injectable({
@@ -17,14 +17,22 @@ export class AuthService {
   currentUser = signal<User | null>(null);
   refreshInFlight : Promise<boolean> | null = null;
 
+  private readonly _token = signal<string | null>(localStorage.getItem('accessToken'));
+
+  readonly isLoggedIn = computed(() => this._token() !== null);
+
   constructor(){
     this.restoreUser();
+    window.addEventListener('storage', () => {
+        this._token.set(localStorage.getItem('accessToken'));
+      });
   }
 
   login(request : logInRequest){
+
     return this.http.post<authResponse>(
       `${this.baseUrl}/leave-management/employee/auth/login`, 
-      request)
+      request, {withCredentials : true})
       .pipe(
         tap(response => {
           this.setToken(response.accessToken)
@@ -96,25 +104,19 @@ export class AuthService {
     }
   }
 
-   logout() {
-    localStorage.removeItem(
-      'access_token'
-    );
+  clearToken() {
+  localStorage.removeItem('accessToken');
+  this._token.set(null);
+  this.currentUser.set(null);
+}
 
-    this.currentUser.set(null);
-
-    this.http.post(`${this.baseUrl}/leave-management/employee/auth/logout`, {}, {withCredentials : true})
-
-    this.router.navigate(['/login']);
-  }
-
-  isLoggedIn() : boolean {
-    return this.currentUser() !== null
+  logout() {
+    return this.http.post(`${this.baseUrl}/leave-management/employee/auth/logout`, {}, {withCredentials : true})
   }
 
   setToken(token : string){
     localStorage.setItem('accessToken', token);
-
+    this._token.set(token);
     const payload = jwtDecode<accessTokenPayload>(token);
 
     this.currentUser.set({

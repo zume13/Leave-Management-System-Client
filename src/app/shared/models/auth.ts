@@ -24,10 +24,11 @@ export interface authResponse{
 }
 
 export interface registerRequest{
-    name : string,
-    email : string,
-    password : string,
-    deptId : string
+    
+    Email : string,
+    EmployeeName : string,
+    Password : string,
+    DepartmentId : string
 }
 
 export interface ProblemDetails {
@@ -40,4 +41,9 @@ export interface ProblemDetails {
 export interface DepartmentResponse{
     id : string,
     name : string
+}
+
+export interface MenuItems{
+    label : string,
+    route : string
 }

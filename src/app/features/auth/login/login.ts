@@ -44,6 +44,7 @@ export class Login {
   }
 
   login(){
+
     const email = this.LogInForm.controls['email'].value;
     const password = this.LogInForm.controls['password'].value;
 
@@ -55,16 +56,16 @@ export class Login {
 
         const payload = jwtDecode<accessTokenPayload>(response.accessToken);
 
-        if(payload.role === 'Admin'){
-          this.homeUrl = 'employee/dashboard';
-        }else{
+        if(payload.role === 'Admin' || payload.role === 'Manager'){
           this.homeUrl = 'admin/dashboard';
+        }else{
+          this.homeUrl = 'employee/dashboard';
         }
         
         this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? this.homeUrl;
         this.toast.show('Logged In Succesfully', 'info');
         this.router.navigateByUrl(this.returnUrl);
-
+        
         this.LogInForm.reset();
       }, 
       error : (err : HttpErrorResponse) =>  {
@@ -86,5 +87,6 @@ export class Login {
         
       }
     })
+
   }
 }

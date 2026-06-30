@@ -1,1 +1,98 @@
-<p>admin works!</p>
+<div class="flex min-h-[calc(100dvh-64px)] bg-gray-100">
+
+  <!-- Main Content -->
+  <main class="p-8">
+
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h2 class="text-3xl font-bold text-gray-800">
+          Dashboard
+        </h2>
+        <p class="text-gray-500">
+          Employee Leave Management Overview
+        </p>
+      </div>
+
+      <div class="rounded-full bg-white px-4 py-2 shadow">
+        Admin
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+
+      <!-- Employees -->
+      <div class="rounded-xl bg-white p-6 shadow">
+        <p class="text-gray-500">Employees</p>
+        <h3 class="mt-2 text-4xl font-bold text-blue-600">
+          totalEmployees 
+        </h3>
+      </div>
+
+      <!-- On Leave -->
+      <div class="rounded-xl bg-white p-6 shadow">
+        <p class="text-gray-500">On Leave</p>
+        <h3 class="mt-2 text-4xl font-bold text-purple-600">
+         onLeave 
+        </h3>
+      </div>
+
+      <!-- Pending -->
+      <div class="rounded-xl bg-white p-6 shadow">
+        <p class="text-gray-500">Pending</p>
+        <h3 class="mt-2 text-4xl font-bold text-yellow-500">
+          pendingRequests
+        </h3>
+      </div>
+
+      <!-- Approved -->
+      <div class="rounded-xl bg-white p-6 shadow">
+        <p class="text-gray-500">Approved</p>
+        <h3 class="mt-2 text-4xl font-bold text-green-600">
+          approvedRequests
+        </h3>
+      </div>
+
+      <!-- Rejected -->
+      <div class="rounded-xl bg-white p-6 shadow">
+        <p class="text-gray-500">Rejected</p>
+        <h3 class="mt-2 text-4xl font-bold text-red-600">
+          rejected
+        </h3>
+      </div>
+
+    </div>
+
+    <!-- Recent Requests -->
+    <div class="mt-10 rounded-xl bg-white shadow">
+
+      <div class="border-b p-6">
+        <h3 class="text-xl font-semibold">
+          Recent Leave Requests
+        </h3>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-6 py-3 text-left">Employee</th>
+              <th class="px-6 py-3 text-left">Leave Type</th>
+              <th class="px-6 py-3 text-left">Status</th>
+              <th class="px-6 py-3 text-left">Date</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+
+  </main>
+</div>

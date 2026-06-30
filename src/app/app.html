@@ -1,6 +1,13 @@
 <app-header></app-header>
 <app-toast-container></app-toast-container>
-<main>
-    <router-outlet/>
-</main>
 
+<main class="flex min-h-[calc(100vh-4rem)]">
+    @if(auth.isLoggedIn()){
+    <app-sidebar-container></app-sidebar-container>
+    }
+
+    <section class="flex-1 overflow-auto">
+        <router-outlet></router-outlet>
+    </section>
+    
+</main>
