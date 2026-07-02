@@ -6,8 +6,9 @@
     <app-sidebar-container></app-sidebar-container>
     }
 
-    <section class="flex-1 overflow-auto">
-        <router-outlet></router-outlet>
+    <section class="flex-1 overflow-auto max-h-[calc(100dvh-64px)]">
+        <router-outlet ></router-outlet>
     </section>
-    
+    <app-spinner-component>   
+    </app-spinner-component>
 </main>

@@ -96,7 +96,7 @@ export class AuthService {
         this.http.post<authResponse>(`${this.baseUrl}/leave-management/employee/auth/refresh-token`, {}, {withCredentials : true})
       );
 
-      localStorage.setItem('accessToken', response.accessToken)
+      this.setToken(response.accessToken);
       return true
     }catch{
       return false
@@ -111,7 +111,7 @@ export class AuthService {
 }
 
   logout() {
-    return this.http.post(`${this.baseUrl}/leave-management/employee/auth/logout`, {}, {withCredentials : true})
+    return this.http.post(`${this.baseUrl}/leave-management/employee/auth/logout`, {}, {withCredentials : true});
   }
 
   setToken(token : string){

@@ -1,7 +1,5 @@
-<div class="flex min-h-[calc(100dvh-64px)] bg-gray-100">
-
-  <!-- Main Content -->
-  <main class="p-8">
+<div class="flex min-h-[calc(100dvh-64px)] bg-gray-100 font-stack">
+  <main class="flex-1 p-8">
 
     <!-- Header -->
     <div class="mb-8 flex items-center justify-between">
@@ -13,83 +11,104 @@
           Employee Leave Management Overview
         </p>
       </div>
-
-      <div class="rounded-full bg-white px-4 py-2 shadow">
-        Admin
-      </div>
     </div>
 
     <!-- Stats -->
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+    <div class="flex flex-wrap gap-6">
 
-      <!-- Employees -->
-      <div class="rounded-xl bg-white p-6 shadow">
+      <div class="flex-1 min-w-55 rounded-xl bg-white p-6 shadow">
         <p class="text-gray-500">Employees</p>
         <h3 class="mt-2 text-4xl font-bold text-blue-600">
-          totalEmployees 
+          @if(query.DashboardData(); as Dashboard){
+            {{ Dashboard.totalEmployees }}
+          }@else {
+            0
+          }
         </h3>
       </div>
 
-      <!-- On Leave -->
-      <div class="rounded-xl bg-white p-6 shadow">
-        <p class="text-gray-500">On Leave</p>
-        <h3 class="mt-2 text-4xl font-bold text-purple-600">
-         onLeave 
-        </h3>
-      </div>
-
-      <!-- Pending -->
-      <div class="rounded-xl bg-white p-6 shadow">
-        <p class="text-gray-500">Pending</p>
+      <div class="flex-1 min-w-55 rounded-xl bg-white p-6 shadow">
+        <p class="text-gray-500">Pending Requests</p>
         <h3 class="mt-2 text-4xl font-bold text-yellow-500">
-          pendingRequests
+          @if(query.DashboardData(); as Dashboard){
+            {{ Dashboard.pendingLeaveRequests }}
+          }@else {
+            0
+          }
         </h3>
       </div>
 
-      <!-- Approved -->
-      <div class="rounded-xl bg-white p-6 shadow">
-        <p class="text-gray-500">Approved</p>
+      <div class="flex-1 min-w-55 rounded-xl bg-white p-6 shadow">
+        <p class="text-gray-500">Approved Requests</p>
         <h3 class="mt-2 text-4xl font-bold text-green-600">
-          approvedRequests
+          @if(query.DashboardData(); as Dashboard){
+            {{ Dashboard.approvedLeaveRequests }}
+          }@else {
+            0
+          }
         </h3>
       </div>
 
-      <!-- Rejected -->
-      <div class="rounded-xl bg-white p-6 shadow">
-        <p class="text-gray-500">Rejected</p>
+      <div class="flex-1 min-w-55 rounded-xl bg-white p-6 shadow">
+        <p class="text-gray-500">Rejected Requests</p>
         <h3 class="mt-2 text-4xl font-bold text-red-600">
-          rejected
+          @if(query.DashboardData(); as Dashboard){
+            {{ Dashboard.rejectedLeaveRequests }}
+          }@else {
+            0
+          }
         </h3>
       </div>
 
     </div>
 
     <!-- Recent Requests -->
-    <div class="mt-10 rounded-xl bg-white shadow">
-
+   <div class="mt-10 rounded-xl bg-white shadow">
       <div class="border-b p-6">
         <h3 class="text-xl font-semibold">
           Recent Leave Requests
         </h3>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="min-w-full">
+    <div class="overflow-x-auto h-83 max-h-83">
 
-          <thead class="bg-gray-100">
+        <table class="min-w-full">
+          
+          <thead>
             <tr>
-              <th class="px-6 py-3 text-left">Employee</th>
-              <th class="px-6 py-3 text-left">Leave Type</th>
-              <th class="px-6 py-3 text-left">Status</th>
-              <th class="px-6 py-3 text-left">Date</th>
+              <th class="sticky top-0 bg-gray-200 px-6 py-3 text-center">Employee</th>
+              <th class="sticky top-0 bg-gray-200 px-6 py-3 text-center">Leave</th>
+              <th class="sticky top-0 bg-gray-200 px-6 py-3 text-center">Status</th>
+              <th class="sticky top-0 bg-gray-200 px-6 py-3 text-center"></th>
             </tr>
           </thead>
 
-          <tbody>
-
+          <tbody class="border-separate border-spacing-y-2">
+           @if(query.Requests().length > 0){
+            @for(request of query.Requests(); track request.id){
+              <tr class="rounded-md my-6 border-y border-gray-300">
+                <td class="max-w-40 px-6 py-4 text-wrap text-center">{{ request.employeeName }}</td>
+                <td class="max-w-40 px-6 py-4 text-center">{{ request.leaveName }}</td>
+                <td class="max-w-30 px-6 py-4 text-center">
+                  <span class="rounded-full  bg-yellow-100 px-3 py-1 text-sm text-yellow-700">
+                    {{ request.status }}
+                  </span>
+                </td>
+                <td class="px-3 py-4">
+                  <div class="flex justify-center">
+                    <button (click)="openModal()"
+                      class="rounded-md bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 cursor-pointer">
+                      View
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
           </tbody>
 
         </table>
+
       </div>
 
     </div>

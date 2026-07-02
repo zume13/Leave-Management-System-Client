@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProblemDetails } from '../../../shared/models/auth';
 import { ToastService } from '../../../core/services/toast-service';
@@ -12,7 +12,7 @@ import { Modal } from '../../../shared/modal/modal';
   templateUrl: './email-verification.html',
   styleUrl: './email-verification.css',
 })
-export class EmailVerification {
+export class EmailVerification implements OnInit {
 
   route = inject(ActivatedRoute);
   http = inject(HttpClient);
@@ -20,7 +20,7 @@ export class EmailVerification {
   router = inject(Router);
   private readonly verifyEndpoint = "https://localhost:7215/leave-management/employee/verify";
   private readonly resendEndpoint = "https://localhost:7215/leave-management/employee/resend-verification";
-  showModal = signal<boolean>(true);
+  showModal = signal<boolean>(false);
   private _token = '';
 
 
@@ -29,12 +29,31 @@ export class EmailVerification {
   }
 
   resendVerificationEmail(){
-    this.http.post(`${this.resendEndpoint}/${this._token}`, {});
+
+    if(!this._token){
+      this.toast.show("Token was null", 'error');
+    }
+
+    this.http.post(`${this.resendEndpoint}/${this._token}`, {})
+      .subscribe({
+        next : () => {
+          this.toast.show("Verification email was sent succesfully.", 'info')
+        },
+        error : (err : HttpErrorResponse) => {
+          const problem = err.error as ProblemDetails
+
+          this.toast.show(problem.detail, 'error');
+        }
+      });
+  }
+
+  ngOnInit(): void {
+    this.verify();
   }
 
   verify(){
 
-    const token = this.route.snapshot.paramMap.get('token');
+    const token = this.route.snapshot.queryParamMap.get('token');
 
     if(!token){
       console.error('null token');

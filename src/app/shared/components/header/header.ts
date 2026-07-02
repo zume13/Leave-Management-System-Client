@@ -3,6 +3,8 @@ import { Modal } from '../../modal/modal';
 import { AuthService } from '../../../core/services/auth-service';
 import { Router } from '@angular/router';
 import { ToastService } from '../../../core/services/toast-service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ProblemDetails } from '../../models/auth';
 
 @Component({
   selector: 'app-header',
@@ -15,7 +17,7 @@ export class Header {
   router = inject(Router);
   toast = inject(ToastService);
 
-  showProfile = computed(() => this.auth.isLoggedIn())
+  showProfile = computed(() => this.auth.isLoggedIn());
   showMenu = signal<boolean>(false);
  
 
@@ -29,8 +31,11 @@ export class Header {
       this.auth.clearToken();
       this.router.navigate(['/login']);
     },
-    error: () => {
-      this.toast.show('Logged out locally, but a server error occurred', 'error');
+    error: (err : HttpErrorResponse) => {
+      const problem = err.error as ProblemDetails
+
+      this.auth.clearToken();
+      this.toast.show(`${problem.detail}`, 'error');
       this.router.navigate(['/login']);
     }
   });

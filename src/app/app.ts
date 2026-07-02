@@ -6,10 +6,11 @@ import { SidebarContainer } from './shared/components/sidebar-container/sidebar-
 import { AuthService } from './core/services/auth-service';
 import { EmailVerification } from "./features/auth/email-verification/email-verification";
 import { Modal } from "./shared/modal/modal";
+import { SpinnerComponent } from "./shared/components/spinner-component/spinner-component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, ToastContainer, SidebarContainer],
+  imports: [RouterOutlet, Header, ToastContainer, SidebarContainer, SpinnerComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
