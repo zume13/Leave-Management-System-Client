@@ -1,3 +1,197 @@
+<app-toast-container>
+</app-toast-container>
+
+<app-modal [IsOpen]="showModal()" (close)="closeModal()">
+
+  <div modal-header>
+    <h2 class="text-xl font-semibold">Leave Request Details</h2>
+  </div>
+
+<div modal-body>
+
+  @if(selectedRequest(); as req){
+
+    <div class="flex flex-wrap gap-4 justify-center">
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Employee</p>
+        <p class="font-medium">{{ req.employeeName }}</p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Leave Type</p>
+        <p class="font-medium">{{ req.leaveName }}</p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Request Date</p>
+        <p>{{ req.requestDate | date:'mediumDate' }}</p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Processed Date</p>
+        <p>
+          {{ req.processedDate ? (req.processedDate | date:'mediumDate') : 'Not processed' }}
+        </p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Start Date</p>
+        <p>{{ req.startDate | date:'mediumDate' }}</p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">End Date</p>
+        <p>{{ req.endDate | date:'mediumDate' }}</p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Leave Days</p>
+        <p>{{ req.leaveDays }}</p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Status</p>
+
+        <span
+          class="rounded-full px-3 py-1 text-sm"
+          [class]="getColor(req.status)">
+          {{ req.status }}
+        </span>
+      </div>
+
+      <div class="basis-full">
+        <p class="text-sm text-gray-500 mb-2">Description</p>
+
+        <div class="mt-1 rounded-md bg-gray-100 p-3">
+          {{ req.description ?? 'No description provided.' }}
+        </div>
+      </div>
+
+      @if(req.status === 'Rejected'){
+        <div class="basis-full">
+          <p class="text-sm text-red-600">Rejection Reason</p>
+
+          <div class="mt-1 rounded-md border border-red-200 bg-red-50 p-3 text-red-700">
+            {{ req.rejectionReason }}
+          </div>
+        </div>
+      }
+
+
+    @if(selectedRequest()!.status === "Pending"){
+
+      <div class="mt-1 flex flex-wrap justify-center gap-3">
+
+        <button
+          (click)="approveRequest(req.id, req.employeeId)"
+          class="rounded-md bg-green-600 px-4 py-2 text-white transition hover:bg-green-700 cursor-pointer">
+          Approve
+        </button>
+
+        <button
+          (click)="openRejectModal()"
+          class="rounded-md bg-red-600 px-4 py-2 text-white transition hover:bg-red-700 cursor-pointer">
+          Reject
+        </button>
+
+      </div>
+
+    } 
+  
+
+    </div>
+
+  }
+
+</div>
+
+<div modal-footer>
+
+    <button
+      (click)="closeModal()"
+      class="rounded-md bg-gray-700 px-4 py-2 text-white hover:bg-gray-800 cursor-pointer">
+      Close
+    </button>
+
+  </div>
+
+</app-modal> 
+
+<app-modal
+  [IsOpen]="showRejectModal()"
+  (OnClose)="closeRejectModal()">
+
+  <div modal-header>
+    <h2 class="text-xl font-semibold text-red-600">
+      Reject Leave Request
+    </h2>
+  </div>
+
+  <div modal-body>
+
+    @if(selectedRequest(); as req){
+
+      <div class="space-y-4">
+
+        <div>
+          <p class="text-sm text-gray-500">Employee</p>
+          <p class="font-medium">{{ req.employeeName }}</p>
+        </div>
+
+        <div>
+          <p class="text-sm text-gray-500">Leave Type</p>
+          <p>{{ req.leaveName }}</p>
+        </div>
+
+        <div>
+          <label
+            for="reason"
+            class="mb-2 block text-sm font-medium text-gray-700">
+            Rejection Reason
+          </label>
+
+          <textarea
+            id="reason"
+            rows="4"
+            [ngModel]="rejectionReason()"
+            (ngModelChange)="rejectionReason.set($event)"
+            class="w-full rounded-md border border-gray-300 p-3 focus:border-red-500 focus:outline-none"
+            placeholder="Enter the reason for rejecting this leave request.">
+            {{ rejectionReason() }}
+          </textarea>
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+  <div modal-footer>
+
+    @if(selectedRequest(); as req){
+
+      <button
+        type="button"
+        class="rounded-md bg-gray-600 px-4 py-2 text-white hover:bg-gray-700 mr-3 cursor-pointer"
+        (click)="closeRejectModal()">
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50 cursor-pointer"
+        (click)="rejectRequest(req.id, req.employeeId, rejectionReason())">
+        Reject Request
+      </button>
+
+    }
+
+  </div>
+
+</app-modal>
+
 <div class="flex min-h-[calc(100dvh-64px)] bg-gray-100 font-stack">
   <main class="flex-1 p-8">
 
@@ -90,13 +284,14 @@
                 <td class="max-w-40 px-6 py-4 text-wrap text-center">{{ request.employeeName }}</td>
                 <td class="max-w-40 px-6 py-4 text-center">{{ request.leaveName }}</td>
                 <td class="max-w-30 px-6 py-4 text-center">
-                  <span class="rounded-full  bg-yellow-100 px-3 py-1 text-sm text-yellow-700">
+                  <span class="rounded-full px-3 py-1 text-sm"
+                        [class]="getColor(request.status)">
                     {{ request.status }}
                   </span>
                 </td>
                 <td class="px-3 py-4">
                   <div class="flex justify-center">
-                    <button (click)="openModal()"
+                    <button (click)="openModal(request)"
                       class="rounded-md bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 cursor-pointer">
                       View
                     </button>
