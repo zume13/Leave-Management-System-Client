@@ -21,3 +21,18 @@ export interface RequestsResponse{
   processedBy: string | null;
 }
 
+export interface EmployeeDto {
+  id: string;
+  name: string;
+  email: string;
+  status: string;
+  department: string;
+}
+
+export interface EmployeeByDepartmentDto{
+  id: string;
+  name: string;
+  email: string;
+  status: string;
+}
+

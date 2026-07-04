@@ -1,54 +1,229 @@
-<div class="mt-10 rounded-xl bg-white shadow">
-      <div class="border-b p-6">
-        <h3 class="text-xl font-semibold">
-          Employees
-        </h3>
-      </div>
+<app-toast-container>
+</app-toast-container>
+<div class="flex min-h-[calc(100dvh-64px)] bg-gray-100 font-stack">
+  <main class="flex-1 p-8">
 
-    <div class="overflow-x-auto">
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h2 class="text-3xl font-bold text-gray-800">
+          Employees
+        </h2>
+        <p class="mt-1 text-gray-500">
+          Manage and search employees.
+        </p>
+      </div>
+    </div>
+
+    <!-- Employee Table -->
+    <div class="rounded-xl bg-white shadow">
+
+      <div class="border-b p-6 flex justify-between items-start flex-wrap gap-6">
+
+  <h3 class="text-xl font-semibold">
+    Employee List
+  </h3>
+
+  <div class="flex items-end gap-4">
+
+    <!-- Filter -->
+    <div class="flex flex-col">
+      <label class="mb-1 text-sm font-medium">
+        Filter
+      </label>
+
+      <select
+        [(ngModel)]="selectedFilter"
+        class="rounded-lg border px-3 py-2">
+
+        <option value="all">All Employees</option>
+        <option value="name">Employee Name</option>
+        <option value="department">Department</option>
+
+      </select>
+    </div>
+
+    <!-- Dynamic Input -->
+    <div class="flex flex-col">
+
+      @if(selectedFilter === 'name'){
+          <label class="mb-1 text-sm font-medium">
+            Employee Name
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="employeeName"
+            placeholder="Enter employee name"
+            class="rounded-lg border px-3 py-2">
+
+      } @else if(selectedFilter === 'department') {
+
+          <label class="mb-1 text-sm font-medium">
+            Department
+          </label>
+
+          <select
+            [(ngModel)]="departmentId"
+            class="rounded-lg border px-3 py-2">
+
+            @for(department of departments; track department.id){
+              <option [value]="department.id">
+                {{ department.name }}
+              </option>
+            }
+
+          </select>
+
+      } 
+
+    </div>
+
+    <!-- Search Button -->
+     @if(selectedFilter !== 'all'){
+      <div>
+        <button
+          (click)="search()"
+          class="w-full rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition cursor-pointer">
+
+          Search
+
+        </button>
+      </div>
+    }
+
+  </div>
+
+</div>
+
+      <div class="max-h-125 overflow-auto">
 
         <table class="min-w-full">
-          
-          <thead class="bg-gray-100">
+
+          <thead>
+
             <tr>
-              <th class="px-6 py-3 text-left">Employee</th>
-              <th class="px-6 py-3 text-left">Leave</th>
-              <th class="px-6 py-3 text-left">Status</th>
-              <th class="px-6 py-3 text-center">Actions</th>
+              <th class="sticky top-0 bg-gray-200 px-6 py-3 text-center">
+                Name
+              </th>
+
+              <th class="sticky top-0 bg-gray-200 px-6 py-3 text-center">
+                Department
+              </th>
+
+              <th class="sticky top-0 bg-gray-200 px-6 py-3 text-center">
+                Status
+              </th>
+
+              <th class="sticky top-0 bg-gray-200 px-6 py-3 text-center">
+                Actions
+              </th>
+
             </tr>
+
           </thead>
 
-          <tbody>
-            <tr class="border-b">
-              <td class="px-6 py-4">John Doe</td>
-              <td class="px-6 py-4">Vacation Leave</td>
-              <td class="px-6 py-4">
-                <span class="rounded-full bg-yellow-100 px-3 py-1 text-sm text-yellow-700">
-                  Pending
-                </span>
-              </td>
-              <td class="px-6 py-4">
-                <div class="flex justify-center gap-2">
-                  <button
-                    class="rounded-md bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700">
-                    Approve
-                  </button>
+          <tbody class="border-separate border-spacing-y-2">
 
-                  <button
-                    class="rounded-md bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700">
-                    Reject
-                  </button>
+            @if(query.Employees().length > 0){
 
-                  <button
-                    class="rounded-md bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700">
-                    View
-                  </button>
-                </div>
-              </td>
-            </tr>
+              @for(employee of query.Employees(); track employee.id){
+
+                <tr class="border-y border-gray-300">
+
+                  <td class="px-6 py-4 text-center">
+                    {{ employee.name }}
+                  </td>
+
+                  <td class="px-6 py-4 text-center">
+                    {{ employee.department }}
+                  </td>
+
+                  <td class="px-6 py-4 text-center">
+
+                    <span
+                      class="rounded-full px-3 py-1 text-sm"
+                      [class]="getStatusColor(employee.status)">
+
+                      {{ employee.status }}
+
+                    </span>
+
+                  </td>
+
+                  <td class="px-6 py-4 text-center">
+
+                    <button
+                      (click)="viewEmployee(employee.id)"
+                      class="rounded-md bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 cursor-pointer">
+
+                      View
+
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              }
+
+            } @else if (selectedFilter === 'id' && query.Employee !== null) {
+
+               <tr class="border-y border-gray-300">
+
+                  <td class="px-6 py-4 text-center">
+                    {{ query.Employee()!.name }}
+                  </td>
+
+                  <td class="px-6 py-4 text-center">
+                    {{ query.Employee()!.department }}
+                  </td>
+
+                  <td class="px-6 py-4 text-center">
+
+                    <span
+                      class="rounded-full px-3 py-1 text-sm"
+                      [class]="getStatusColor(query.Employee()!.status)">
+
+                      {{ query.Employee()!.status }}
+
+                    </span>
+
+                  </td>
+
+                  <td class="px-6 py-4 text-center">
+
+                    <button
+                      (click)="viewEmployee(query.Employee()!.id)"
+                      class="rounded-md bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 cursor-pointer">
+
+                      View
+
+                    </button>
+
+                  </td>
+
+                </tr>
+
+            }@else {
+
+              <tr>
+
+                <td colspan="6" class="py-8 text-center text-gray-500">
+                  No employees found.
+                </td>
+
+              </tr>
+
+            }
+
           </tbody>
+
         </table>
 
       </div>
 
     </div>
+
+  </main>
+</div>

@@ -1,4 +1,4 @@
-import { Component, input, output, inject, OnInit } from '@angular/core';
+import { Component, input, output, inject, OnInit, computed } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth-service';
 import { MenuItems } from '../../models/auth';
@@ -9,30 +9,21 @@ import { MenuItems } from '../../models/auth';
   templateUrl: './sidebar-container.html',
   styleUrl: './sidebar-container.css',
 })
-export class SidebarContainer implements OnInit {
+export class SidebarContainer {
 
   auth = inject(AuthService);
 
-  menuItems : MenuItems[] = [];
-  
-  ngOnInit() : void{
-    this.getMenuItems();
-  }
+  menuItems = computed(() => {
+    const role = this.auth.currentUser()?.role
 
-  getMenuItems(){
-
-    const role = this.auth.getRole();
-
-    if (!role) {
-      this.menuItems = [];
-      return; 
+    if(!role){
+      return [];
     }
 
-    const adminRoles = [ 'Admin', 'Manager'];
-
-    this.menuItems = adminRoles.includes(role) ? this.adminMenu : this.employeeMenu;
-
-  } 
+    return ['Admin', 'Manager'].includes(role) ? 
+      this.adminMenu : 
+      this.employeeMenu;
+  });
 
 employeeMenu = 
 [

@@ -17,7 +17,7 @@ export class Header {
   router = inject(Router);
   toast = inject(ToastService);
 
-  showProfile = computed(() => this.auth.isLoggedIn());
+  showProfile = computed(() => this.auth.isLoggedIn() && this.auth.currentUser !== null);
   showMenu = signal<boolean>(false);
  
 

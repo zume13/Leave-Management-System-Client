@@ -2,7 +2,7 @@
 <app-toast-container></app-toast-container>
 
 <main class="flex min-h-[calc(100vh-4rem)]">
-    @if(auth.isLoggedIn()){
+    @if(auth.isLoggedIn() && auth.currentUser() !== null){
     <app-sidebar-container></app-sidebar-container>
     }
 
