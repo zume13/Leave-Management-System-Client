@@ -15,8 +15,6 @@ export class Queryservice {
 
   Employees = signal<EmployeeDto[]>([]);
 
-  Employee = signal<EmployeeDto | null>(null);
-
   getDashboardData(){
     return this.http.get<DashboardResponse>(`${this.baseUrl}/leave-management/employee/dashboard`);
   }
@@ -33,11 +31,33 @@ export class Queryservice {
   }
 
   getAllEmployees(){
-    console.log('hit')
     return this.http.get<EmployeeDto[]>(`${this.baseUrl}/leave-management/employee/all`);
+  }
+
+  getEmployeeByName(name : string){
+    return this.http.get<EmployeeDto[]>(`${this.baseUrl}/leave-management/employee/search-by-name`, 
+      {
+          params : 
+        {
+          name : name,
+          pageNumber : 1,
+          pageSize : 10
+        }
+      });
   }
 
   getEmployeeById(employeeId : string){
     return this.http.get<EmployeeDto>(`${this.baseUrl}/leave-management/employee/${employeeId}`);
+  }
+
+  getEmployeeByDepartment(departmentId : string){
+    return this.http.get<EmployeeDto[]>(`${this.baseUrl}/leave-management/employee/in-department/${departmentId}`, 
+        {
+          params : {
+            pageSize : 10,
+            pageNumber : 1
+          }
+        }
+    );
   }
 }

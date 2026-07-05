@@ -5,6 +5,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetails } from '../../../shared/models/auth';
 import { ToastService } from '../../../core/services/toast-service';
 import { ToastContainer } from "../../../shared/components/toast-container/toast-container";
+import { subscribeOn } from 'rxjs';
 
 @Component({
   selector: 'app-employee-list-container',
@@ -40,9 +41,9 @@ export class EmployeeListContainer implements OnInit {
     }
   ];
   
-  selectedFilter = 'all';
-  employeeName = '';
-  departmentId = '';
+  selectedFilter = signal<'all' | 'name' | 'department'>('all');
+  employeeName = signal('');
+  departmentId = signal('');
 
   ngOnInit(): void {
     this.getEmployees();
@@ -52,9 +53,64 @@ export class EmployeeListContainer implements OnInit {
 
   }
 
+  searchEmployeeByName(){
+
+    if(this.employeeName() === ''){
+      return 
+    }
+
+    this.query.getEmployeeByName(this.employeeName()).subscribe({
+      next : (response) => {
+        this.query.Employees.set(response);
+      },
+      error : (err : HttpErrorResponse) => {
+        const problem = err.error as ProblemDetails;
+
+        this.toast.show(problem.detail, 'error');
+      }
+    });
+  }
+
+  getEmployeesByDepartment(){
+
+    if(this.departmentId() === ''){
+      console.error('null dept id');
+      return 
+    }
+    console.log(this.departmentId());
+    this.query.getEmployeeByDepartment(this.departmentId()).subscribe({
+      next : (response) => {
+        this.query.Employees.set(response);
+      },
+      error : (err : HttpErrorResponse) => {
+        this.toast.show(err.error, 'error');
+      }
+    })
+
+  }
+
+  changedFilter(value: 'all' | 'name' | 'department'){
+    this.selectedFilter.set(value)
+
+    this.query.Employees.set([]);
+
+    if(value === 'all'){
+      this.getEmployees();
+    }
+
+    if(value !== 'name'){
+      this.employeeName.set('');
+    }
+
+    if(value !== 'department'){
+      this.departmentId.set('');
+    }
+  }
+
+
   getEmployees(){
 
-    if(this.query.Employees().length > 0 && this.selectedFilter !== 'all'){
+    if(this.query.Employees().length > 0 && this.selectedFilter() !== 'all'){
       return;
     }
 
@@ -71,7 +127,15 @@ export class EmployeeListContainer implements OnInit {
   }
 
   search(){
-    
+
+    switch(this.selectedFilter()){
+      case 'name' : this.searchEmployeeByName();
+        break;
+      case 'department' : this.getEmployeesByDepartment();
+        break;
+      default : this.getEmployees();
+    }
+
   }
 
   getStatusColor(status : string){
