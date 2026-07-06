@@ -1,73 +1,196 @@
 <app-toast-container>
 </app-toast-container>
 
-<app-modal [IsOpen]="showViewModal()" (close)="closeModal()">
+<app-modal [IsOpen]="showModal()" (close)="closeReqModal()">
 
-  <!-- Header -->
   <div modal-header>
-    <h2 class="text-xl font-semibold">Employee Details</h2>
+    <h2 class="text-xl font-semibold">Leave Request Details</h2>
   </div>
 
-  <!-- Body -->
-   @if(employee()){
-  <div modal-body >
+<div modal-body>
 
-    <div class="grid grid-cols-1 gap-4">
+  @if(selectedRequest(); as req){
 
-      <div>
-        <label class="block text-sm font-medium text-gray-500">Status</label>
+    <div class="flex flex-wrap gap-4 justify-center">
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Employee</p>
+        <p class="font-medium">{{ req.employeeName }}</p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Leave Type</p>
+        <p class="font-medium">{{ req.leaveName }}</p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Request Date</p>
+        <p>{{ req.requestDate | date:'mediumDate' }}</p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Processed Date</p>
+        <p>
+          {{ req.processedDate ? (req.processedDate | date:'mediumDate') : 'Not processed' }}
+        </p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Start Date</p>
+        <p>{{ req.startDate | date:'mediumDate' }}</p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">End Date</p>
+        <p>{{ req.endDate | date:'mediumDate' }}</p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Leave Days</p>
+        <p>{{ req.leaveDays }}</p>
+      </div>
+
+      <div class="min-w-50 text-center">
+        <p class="text-sm text-gray-500 mb-2">Status</p>
+
         <span
-          class="inline-flex rounded-full px-3 py-1 text-sm font-medium"
-          [class]="getStatusColor(employee()!.status)"
-        >
-          {{ employee()!.status }}
+          class="rounded-full px-3 py-1 text-sm"
+          [class]="getStatusColor(req.status)">
+          {{ req.status }}
         </span>
       </div>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-500">ID</label>
-        <p class="mt-1 rounded-md border bg-gray-50 p-2">
-          {{ employee()!.id }}
-        </p>
+      <div class="basis-full">
+        <p class="text-sm text-gray-500 mb-2">Description</p>
+
+        <div class="mt-1 rounded-md bg-gray-100 p-3">
+          {{ req.description ?? 'No description provided.' }}
+        </div>
       </div>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-500">Name</label>
-        <p class="mt-1 rounded-md border bg-gray-50 p-2">
-          {{ employee()!.name }}
-        </p>
+      @if(req.status === 'Rejected'){
+        <div class="basis-full">
+          <p class="text-sm text-red-600">Rejection Reason</p>
+
+          <div class="mt-1 rounded-md border border-red-200 bg-red-50 p-3 text-red-700">
+            {{ req.rejectionReason }}
+          </div>
+        </div>
+      }
+
+
+    @if(selectedRequest()!.status === "Pending"){
+
+      <div class="mt-1 flex flex-wrap justify-center gap-3">
+
+        <button
+          (click)="approveRequest(req.id, req.employeeId)"
+          class="rounded-md bg-green-600 px-4 py-2 text-white transition hover:bg-green-700 cursor-pointer">
+          Approve
+        </button>
+
+        <button
+          (click)="openRejectModal()"
+          class="rounded-md bg-red-600 px-4 py-2 text-white transition hover:bg-red-700 cursor-pointer">
+          Reject
+        </button>
+
       </div>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-500">Email</label>
-        <p class="mt-1 rounded-md border bg-gray-50 p-2">
-          {{ employee()!.email }}
-        </p>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-500">Department</label>
-        <p class="mt-1 rounded-md border bg-gray-50 p-2">
-          {{ employee()!.department }}
-        </p>
-      </div>
+    } 
+  
 
     </div>
-  
-  </div>
-   }
-  <!-- Footer -->
-  <div modal-footer>
+
+  }
+
+</div>
+
+<div modal-footer>
+
     <button
-      class="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700 cursor-pointer"
-      (click)="closeModal()"
-    >
+      (click)="closeReqModal()"
+      class="rounded-md bg-gray-700 px-4 py-2 text-white hover:bg-gray-800 cursor-pointer">
       Close
     </button>
+
+  </div>
+
+</app-modal> 
+
+<app-modal
+  [IsOpen]="showRejectModal()"
+  (OnClose)="closeRejectModal()">
+
+  <div modal-header>
+    <h2 class="text-xl font-semibold text-red-600">
+      Reject Leave Request
+    </h2>
+  </div>
+
+  <div modal-body>
+
+    @if(selectedRequest(); as req){
+
+      <div class="space-y-4">
+
+        <div>
+          <p class="text-sm text-gray-500">Employee</p>
+          <p class="font-medium">{{ req.employeeName }}</p>
+        </div>
+
+        <div>
+          <p class="text-sm text-gray-500">Leave Type</p>
+          <p>{{ req.leaveName }}</p>
+        </div>
+
+        <div>
+          <label
+            for="reason"
+            class="mb-2 block text-sm font-medium text-gray-700">
+            Rejection Reason
+          </label>
+
+          <textarea
+            id="reason"
+            rows="4"
+            [ngModel]="rejectionReason()"
+            (ngModelChange)="rejectionReason.set($event)"
+            class="w-full rounded-md border border-gray-300 p-3 focus:border-red-500 focus:outline-none"
+            placeholder="Enter the reason for rejecting this leave request.">
+            {{ rejectionReason() }}
+          </textarea>
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+  <div modal-footer>
+
+    @if(selectedRequest(); as req){
+
+      <button
+        type="button"
+        class="rounded-md bg-gray-600 px-4 py-2 text-white hover:bg-gray-700 mr-3 cursor-pointer"
+        (click)="closeRejectModal()">
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50 cursor-pointer"
+        (click)="rejectRequest(req.id, req.employeeId, rejectionReason())">
+        Reject Request
+      </button>
+
+    }
+
   </div>
 
 </app-modal>
-
 
 <div class="flex min-h-[calc(100dvh-64px)] bg-gray-100 font-stack">
   <main class="flex-1 p-8">
@@ -106,9 +229,11 @@
         (ngModelChange)="changedFilter($event)"
         class="rounded-lg border px-3 py-2">
 
-        <option value="all">All Employees</option>
-        <option value="name">Employee Name</option>
-        <option value="department">Department</option>
+        <option value="all">All</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+        <option value="pending">Pending</option>
+        <option value="cancelled">Cancelled</option>
 
       </select>
     </div>
@@ -306,7 +431,7 @@
                   <td class="px-6 py-4 text-center">
 
                     <button
-                      (click)="viewEmployee(employee.id)"
+                      (click)="viewRequest(employee.id)"
                       class="rounded-md bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 cursor-pointer">
 
                       View

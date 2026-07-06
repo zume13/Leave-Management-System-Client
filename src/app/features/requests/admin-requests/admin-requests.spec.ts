@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RequestContainer } from './request-container';
+import { AdminRequests } from './admin-requests';
 
-describe('RequestContainer', () => {
-  let component: RequestContainer;
-  let fixture: ComponentFixture<RequestContainer>;
+describe('AdminRequests', () => {
+  let component: AdminRequests;
+  let fixture: ComponentFixture<AdminRequests>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RequestContainer]
+      imports: [AdminRequests]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(RequestContainer);
+    fixture = TestBed.createComponent(AdminRequests);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

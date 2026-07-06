@@ -34,7 +34,7 @@ export const routes: Routes = [
     {
         path : 'admin/requests',
         canActivate : [authGuardGuard, adminGuardGuard],
-        loadComponent : () => import('./features/requests/request-container/request-container').then(m => m.RequestContainer)
+        loadComponent : () => import('./features/requests/admin-requests/admin-requests').then(m => m.AdminRequests)
     },
     {
         path : 'admin/leaves',
@@ -49,7 +49,7 @@ export const routes: Routes = [
     {
         path : 'employee/requests',
         canActivate : [authGuardGuard, employeeGuardGuard],
-        loadComponent : () =>  import('./features/requests/request-container/request-container').then(m => m.RequestContainer)
+        loadComponent : () =>  import('./features/requests//employee-requests/employee-requests').then(m => m.EmployeeRequests)
     },
     {
         path : 'employee/allocations',

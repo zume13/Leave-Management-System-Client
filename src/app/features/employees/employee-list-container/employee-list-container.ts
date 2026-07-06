@@ -6,10 +6,12 @@ import { ProblemDetails } from '../../../shared/models/auth';
 import { ToastService } from '../../../core/services/toast-service';
 import { ToastContainer } from "../../../shared/components/toast-container/toast-container";
 import { subscribeOn } from 'rxjs';
+import { Modal } from "../../../shared/modal/modal";
+import { EmployeeDto } from '../../../shared/models/query';
 
 @Component({
   selector: 'app-employee-list-container',
-  imports: [FormsModule, ToastContainer],
+  imports: [FormsModule, ToastContainer, Modal],
   templateUrl: './employee-list-container.html',
   styleUrl: './employee-list-container.css',
 })
@@ -17,6 +19,7 @@ export class EmployeeListContainer implements OnInit {
 
   query = inject(Queryservice);
   toast = inject(ToastService);
+
 
   departments = [
     {
@@ -44,12 +47,31 @@ export class EmployeeListContainer implements OnInit {
   selectedFilter = signal<'all' | 'name' | 'department'>('all');
   employeeName = signal('');
   departmentId = signal('');
+  showViewModal = signal<boolean>(false);
+  employee = signal<EmployeeDto | null>(null);
 
   ngOnInit(): void {
     this.getEmployees();
   }
 
+  openModal(){
+    this.showViewModal.set(true);
+  }
+
+  closeModal(){
+    this.showViewModal.set(false);
+  }
+
   viewEmployee(employeeId : string){
+    const matched = this.query.Employees().find((value) => value.id === employeeId);
+
+    if(!matched){
+      this.toast.show('Employee not found', 'error');
+      return
+    }
+      
+    this.employee.set(matched);
+    this.openModal();
 
   }
 
@@ -142,10 +164,12 @@ export class EmployeeListContainer implements OnInit {
     switch(status){
       case 'Rejected' : 
         return 'bg-red-100 text-red-700';
-      case 'Approved'  : 
+      case 'Approved' : 
         return 'bg-green-100 text-green-700';
       case 'Pending' : 
         return 'bg-yellow-100 text-yellow-700';
+      case 'Active' : 
+        return 'bg-blue-100 text-blue-700';
       default : 
         return 'bg-gray-100 text-gray-700';
     }
