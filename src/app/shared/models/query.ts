@@ -28,3 +28,9 @@ export interface EmployeeDto {
   status: string;
   department: string;
 }
+
+export interface LeavesDto{
+    leaveId: string;
+    leaveName: string;
+    leaveDays: number;
+}

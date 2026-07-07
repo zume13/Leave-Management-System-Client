@@ -9,7 +9,7 @@
   </div>
 
   <!-- Body -->
-   @if(employee()){
+   @if(query.employee()){
   <div modal-body >
 
     <div class="grid grid-cols-1 gap-4">
@@ -18,37 +18,37 @@
         <label class="block text-sm font-medium text-gray-500">Status</label>
         <span
           class="inline-flex rounded-full px-3 py-1 text-sm font-medium"
-          [class]="getStatusColor(employee()!.status)"
+          [class]="getStatusColor(query.employee()!.status)"
         >
-          {{ employee()!.status }}
+          {{ query.employee()!.status }}
         </span>
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-500">ID</label>
         <p class="mt-1 rounded-md border bg-gray-50 p-2">
-          {{ employee()!.id }}
+          {{ query.employee()!.id }}
         </p>
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-500">Name</label>
         <p class="mt-1 rounded-md border bg-gray-50 p-2">
-          {{ employee()!.name }}
+          {{ query.employee()!.name }}
         </p>
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-500">Email</label>
         <p class="mt-1 rounded-md border bg-gray-50 p-2">
-          {{ employee()!.email }}
+          {{ query.employee()!.email }}
         </p>
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-500">Department</label>
         <p class="mt-1 rounded-md border bg-gray-50 p-2">
-          {{ employee()!.department }}
+          {{ query.employee()!.department }}
         </p>
       </div>
 

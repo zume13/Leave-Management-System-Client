@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Queryservice } from '../../../core/services/queryservice';
 import { ToastService } from '../../../core/services/toast-service';
 import { HttpErrorResponse } from '@angular/common/http';

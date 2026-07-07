@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ToastContainer } from '../../../shared/components/toast-container/toast-container';
 import { ToastService } from '../../../core/services/toast-service';
 import { Modal } from '../../../shared/modal/modal';
@@ -8,6 +8,8 @@ import { RequestsCommandService } from '../../../core/services/requests-command-
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProblemDetails } from '../../../shared/models/auth';
 import { FormsModule } from '@angular/forms';
+import { requestType } from '../../../shared/utilities/types';
+import { Queryservice } from '../../../core/services/queryservice';
 
 
 @Component({
@@ -16,21 +18,27 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './admin-requests.html',
   styleUrl: './admin-requests.css',
 })
-export class AdminRequests {
+export class AdminRequests implements OnInit {
+
+  ngOnInit(): void {
+    this.getRequest();
+  }
 
   toast = inject(ToastService);
   command = inject(RequestsCommandService);
+  query = inject(Queryservice);
   showModal = signal<boolean>(false);
   showRejectModal = signal<boolean>(false);
+  selectedFilter = signal<requestType>('all');
   selectedRequest = signal<RequestsResponse | null>(null);
   rejectionReason = signal('');
 
   showReqModal(){
-
+    this.showModal.set(true);
   }
 
   closeReqModal(){
-
+    this.showModal.set(false);
   }
 
    openRejectModal(){
@@ -42,8 +50,41 @@ export class AdminRequests {
     this.showRejectModal.set(false);
   }
 
+  changedFilter(value : requestType){
+    this.query.Requests.set([]);
+    this.getRequest(value);
+  }
+
   viewRequest(requestId : string){
 
+    const matched  = this.query.Requests().find(values => values.id === requestId);
+
+    if(matched){
+      this.selectedRequest.set(matched);
+      this.showReqModal()
+      return;
+    }
+    
+    this.toast.show('Leave request not found', 'error');
+  }
+
+  getRequest(filter : requestType = 'all'){
+
+    if(this.query.Requests().length > 0){
+      return;
+    }
+
+    switch(filter){
+      case 'all' : this.getAllRequest();
+        break;
+      case 'approved' : this.getAllApproved();
+        break;
+      case 'rejected' : this.getAllRejected();
+        break;
+      case 'pending' : this.getAllPending();
+        break;
+      default : this.getAllRequest();
+    }
   }
 
    approveRequest(requestId : string, employeeId : string){
@@ -96,4 +137,55 @@ export class AdminRequests {
     }
   }
 
+  getAllRequest(){
+
+    console.log('all')
+    this.query.getAllRequest().subscribe({
+      next : (response) => {
+        this.query.Requests.set(response);
+      },
+      error : (err : HttpErrorResponse) => {
+        this.toast.show(err.error, 'error');
+      }
+    })
+  }
+
+  getAllApproved(){
+
+    console.log('app')
+    this.query.getApprovedRequests().subscribe({
+      next : (response) => {
+        this.query.Requests.set(response);
+      },
+      error : (err : HttpErrorResponse) => {
+        this.toast.show(err.error, 'error');
+      }
+    })
+  }
+
+  getAllRejected(){
+
+      console.log('rej')
+    this.query.getRejectedRequests().subscribe({
+      next : (response) => {
+        this.query.Requests.set(response);
+      },
+      error : (err : HttpErrorResponse) => {
+        this.toast.show(err.error, 'error');
+      }
+    })
+  }
+
+  getAllPending(){
+
+    console.log('pend')
+    this.query.getPendingRequests().subscribe({
+      next : (response) => {
+        this.query.Requests.set(response);
+      },
+      error : (err : HttpErrorResponse) => {
+        this.toast.show(err.error, 'error');
+      }
+    })
+  }
 }

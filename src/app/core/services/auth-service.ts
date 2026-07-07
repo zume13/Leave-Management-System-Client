@@ -5,6 +5,7 @@ import { accessTokenPayload, authResponse, logInRequest, registerRequest } from 
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { firstValueFrom, tap } from 'rxjs';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,7 @@ export class AuthService {
 
   http = inject(HttpClient)
   router = inject(Router)
-  private readonly baseUrl = "https://localhost:7215";
+  private readonly baseUrl = environment.baseUrl;
   currentUser = signal<User | null>(null);
   refreshInFlight : Promise<boolean> | null = null;
 

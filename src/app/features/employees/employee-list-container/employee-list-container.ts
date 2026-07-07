@@ -48,7 +48,7 @@ export class EmployeeListContainer implements OnInit {
   employeeName = signal('');
   departmentId = signal('');
   showViewModal = signal<boolean>(false);
-  employee = signal<EmployeeDto | null>(null);
+  
 
   ngOnInit(): void {
     this.getEmployees();
@@ -70,7 +70,7 @@ export class EmployeeListContainer implements OnInit {
       return
     }
       
-    this.employee.set(matched);
+    this.query.employee.set(matched);
     this.openModal();
 
   }
@@ -132,7 +132,7 @@ export class EmployeeListContainer implements OnInit {
 
   getEmployees(){
 
-    if(this.query.Employees().length > 0 && this.selectedFilter() !== 'all'){
+    if(this.query.Employees().length > 0 && this.selectedFilter() === 'all'){
       return;
     }
 

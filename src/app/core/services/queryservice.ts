@@ -1,19 +1,24 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { DashboardResponse, EmployeeDto, RequestsResponse } from '../../shared/models/query';
+import { DashboardResponse, EmployeeDto, LeavesDto, RequestsResponse } from '../../shared/models/query';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Queryservice {
   private http = inject(HttpClient);
-  private readonly baseUrl = 'https://localhost:7215'
+  private readonly baseUrl = environment.baseUrl;
 
   DashboardData = signal<DashboardResponse | null>(null);
 
   Requests = signal<RequestsResponse[]>([]);
 
   Employees = signal<EmployeeDto[]>([]);
+
+  Leaves = signal<LeavesDto[]>([]);
+
+  employee = signal<EmployeeDto | null>(null);
 
   getDashboardData(){
     return this.http.get<DashboardResponse>(`${this.baseUrl}/leave-management/employee/dashboard`);
@@ -59,5 +64,55 @@ export class Queryservice {
           }
         }
     );
+  }
+
+  getPendingRequests(){
+
+    return this.http.get<RequestsResponse[]>(`${this.baseUrl}/leave-management/leave-request/pending`, 
+      { 
+        params : 
+        {
+          pageNumber : 1,
+          pageSize : 10
+        }
+      });
+  
+  }
+
+  getApprovedRequests(){
+
+    return this.http.get<RequestsResponse[]>(`${this.baseUrl}/leave-management/leave-request/approved`, 
+      { 
+        params : 
+        {
+          pageNumber : 1,
+          pageSize : 10
+        }
+      });
+  
+
+  }
+
+  getRejectedRequests(){
+
+    return this.http.get<RequestsResponse[]>(`${this.baseUrl}/leave-management/leave-request/rejected`, 
+      { 
+        params : 
+        {
+          pageNumber : 1,
+          pageSize : 10
+        }
+      });
+  
+
+  }
+
+  getLeaves(){
+    return this.http.get<LeavesDto[]>(`${this.baseUrl}/leave-management/leave-type/all`, {
+      params : {
+        pageSize : 10,
+        pageNumber : 1
+      }
+    });
   }
 }
