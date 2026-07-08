@@ -34,3 +34,18 @@ export interface LeavesDto{
     leaveName: string;
     leaveDays: number;
 }
+
+export interface GetAllRequestsByEmployeeDto {
+  id: string;
+  employeeName: string;
+  leaveName : string;
+  requestDate: string;
+  processedDate: string | null;
+  startDate: string;
+  endDate: string;
+  leaveDays: number;
+  status: string;
+  description: string | null;
+  rejectionReason: string | null;
+  processedBy: string | null;
+}

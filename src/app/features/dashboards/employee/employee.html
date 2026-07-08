@@ -1,0 +1,220 @@
+<app-toast-container>
+</app-toast-container>
+
+<div class="flex min-h-[calc(100dvh-64px)] bg-gray-100 font-stack">
+  <main class="flex-1 p-8">
+
+    <!-- Header -->
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h2 class="text-3xl font-bold text-gray-800">
+          My Dashboard
+        </h2>
+        <p class="text-gray-500">
+          Manage your leave requests and monitor their status.
+        </p>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="flex">
+
+        <button
+          (click)="openCreateModal()"
+          class="rounded-lg bg-blue-600 px-5 py-2 text-white shadow hover:bg-blue-700 transition cursor-pointer">
+          + Create Request
+        </button>
+
+      </div>
+    </div>
+
+    <!-- My Requests Stats -->
+    <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+
+      <div class="rounded-xl bg-white p-6 shadow">
+        <p class="text-gray-500">Total Requests</p>
+        <h3 class="mt-2 text-4xl font-bold text-blue-600">
+          @if(query.EmployeeDashBoardData()){
+            {{ totalRequests() }}
+          }@else{
+            0
+          }
+        </h3>
+      </div>
+
+      <div class="rounded-xl bg-white p-6 shadow">
+        <p class="text-gray-500">Pending</p>
+        <h3 class="mt-2 text-4xl font-bold text-yellow-500">
+          @if(query.DashboardData()){
+            {{ totalPendingRequest() }}
+          }@else{
+            0
+          }
+        </h3>
+      </div>
+
+      <div class="rounded-xl bg-white p-6 shadow">
+        <p class="text-gray-500">Approved</p>
+        <h3 class="mt-2 text-4xl font-bold text-green-600">
+          @if(query.DashboardData()){
+            {{ totalApprovedRequest() }}
+          }@else{
+            0
+          }
+        </h3>
+      </div>
+
+      <div class="rounded-xl bg-white p-6 shadow">
+        <p class="text-gray-500">Rejected</p>
+        <h3 class="mt-2 text-4xl font-bold text-red-600">
+          @if(query.DashboardData(); as Dashboard){
+            {{ totalRejectedRequest() }}
+          }@else{
+            0
+          }
+        </h3>
+      </div>
+
+    </div>
+
+    <!-- My Recent Requests -->
+    <div class="mt-10 rounded-xl bg-white shadow">
+
+      <div class="flex items-center justify-between border-b p-6">
+        <div>
+          <h3 class="text-xl font-semibold">
+            My Recent Requests
+          </h3>
+          <p class="text-sm text-gray-500">
+            Your latest leave request history.
+          </p>
+        </div>
+      </div>
+
+      <div class="max-h-107.5 overflow-y-auto overflow-x-auto">
+
+        <table class="min-w-full">
+
+          <thead>
+
+            <tr class="bg-gray-100">
+
+              <th class="sticky top-0 px-6 py-3 text-center">
+                Leave Type
+              </th>
+
+              <th class="sticky top-0 px-6 py-3 text-center">
+                Date Filed
+              </th>
+
+              <th class="sticky top-0 px-6 py-3 text-center">
+                Start Date
+              </th>
+
+              <th class="sticky top-0 px-6 py-3 text-center">
+                End Date
+              </th>
+
+              <th class="sticky top-0 px-6 py-3 text-center">
+                Status
+              </th>
+
+              <th class="sticky top-0 px-6 py-3 text-center">
+                Actions
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            @if(query.EmployeeDashBoardData() && query.EmployeeDashBoardData()!.length > 0){
+
+              @for(request of query.EmployeeDashBoardData(); track request.id){
+
+              <tr class="border-b hover:bg-gray-50">
+
+                <td class="px-6 py-4 text-center">
+                  {{ request.leaveName }}
+                </td>
+
+                <td class="px-6 py-4 text-center">
+                  {{ request.requestDate | date }}
+                </td>
+
+                <td class="px-6 py-4 text-center">
+                  {{ request.startDate | date }}
+                </td>
+
+                <td class="px-6 py-4 text-center">
+                  {{ request.endDate | date }}
+                </td>
+
+                <td class="px-6 py-4 text-center">
+
+                  <span
+                    class="rounded-full px-3 py-1 text-sm"
+                    [class]="getColor(request.status)">
+                    {{ request.status }}
+                  </span>
+
+                </td>
+
+                <td class="px-6 py-4">
+
+                  <div class="flex justify-center gap-2">
+
+                    <button
+                      (click)="openViewModal(request.id)"
+                      class="rounded bg-blue-600 px-3 py-1 text-white hover:bg-blue-700">
+                      View
+                    </button>
+
+                    @if(request.status === 'Pending'){
+
+                    <button
+                      (click)="openUpdateModal(request.id)"
+                      class="rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600">
+                      Edit
+                    </button>
+
+                    <button
+                      (click)="openCancelModal(request.id)"
+                      class="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700">
+                      Cancel
+                    </button>
+
+                    }
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+              }
+
+            }@else{
+
+              <tr>
+
+                <td colspan="5" class="py-12 text-center text-gray-500">
+
+                  No leave requests yet.
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </main>
+</div>

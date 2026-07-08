@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { DashboardResponse, EmployeeDto, LeavesDto, RequestsResponse } from '../../shared/models/query';
+import { DashboardResponse, EmployeeDto, GetAllRequestsByEmployeeDto, LeavesDto, RequestsResponse } from '../../shared/models/query';
 import { environment } from '../../../environments/environment.development';
 
 @Injectable({
@@ -12,6 +12,8 @@ export class Queryservice {
 
   DashboardData = signal<DashboardResponse | null>(null);
 
+  EmployeeDashBoardData = signal<GetAllRequestsByEmployeeDto[] | null>(null);
+
   Requests = signal<RequestsResponse[]>([]);
 
   Employees = signal<EmployeeDto[]>([]);
@@ -22,6 +24,15 @@ export class Queryservice {
 
   getDashboardData(){
     return this.http.get<DashboardResponse>(`${this.baseUrl}/leave-management/employee/dashboard`);
+  }
+
+  getAllEmployeeRequestsById(EmployeeId : string){
+    return this.http.get<GetAllRequestsByEmployeeDto[]>(`${this.baseUrl}/leave-management/leave-request/employee/${EmployeeId}`, {
+      params : {
+        pageSize : 10,
+        pageNumber : 1, 
+      }
+    });
   }
  
   getAllRequest(){
