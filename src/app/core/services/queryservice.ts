@@ -29,8 +29,8 @@ export class Queryservice {
   getAllEmployeeRequestsById(EmployeeId : string){
     return this.http.get<GetAllRequestsByEmployeeDto[]>(`${this.baseUrl}/leave-management/leave-request/employee/${EmployeeId}`, {
       params : {
-        pageSize : 10,
-        pageNumber : 1, 
+        PageNumber : 1, 
+        PageSize : 10
       }
     });
   }

@@ -1,6 +1,357 @@
 <app-toast-container>
 </app-toast-container>
 
+<!--Update-->
+<app-modal
+  [IsOpen]="showUpdateModal()"
+  (close)="closeUpdateModal()">
+
+  <!-- Header -->
+  <div modal-header>
+    <h2 class="text-xl font-semibold">
+      Update Leave Request
+    </h2>
+    <p class="text-sm text-gray-500">
+      Modify your leave request details.
+    </p>
+  </div>
+
+  <!-- Body -->
+  <div modal-body class="space-y-4">
+
+    <!-- Start Date -->
+    <div>
+      <label class="block text-sm font-medium mb-1">
+        Start Date
+      </label>
+
+      <input
+        type="date"
+        class="w-full rounded-md border p-2 cursor-pointer"
+        [ngModel]="updateModalValues()!.newStartDate"
+        (ngModelChange)="updateStartDate($event)">
+    </div>
+
+    <!-- End Date -->
+    <div>
+      <label class="block text-sm font-medium mb-1">
+        End Date
+      </label>
+
+      <input
+        type="date"
+        class="w-full rounded-md border p-2 cursor-pointer"
+        [ngModel]="updateModalValues().newEndDate"
+        (ngModelChange)="updateEndDate($event)">
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label class="block text-sm font-medium mb-1">
+        Description
+      </label>
+
+      <textarea
+        rows="4"
+        class="w-full rounded-md border p-2 resize-none"
+        placeholder="Reason for leave..."
+        [ngModel]="updateModalValues().newDescription"
+        (ngModelChange)="updateDescription($event)">
+      </textarea>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div modal-footer class="flex justify-between w-full">
+
+    <div class="flex gap-2">
+
+      <button
+        type="button"
+        class="rounded-md border px-4 py-2 cursor-pointer"
+        (click)="closeUpdateModal()">
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 cursor-pointer"
+        (click)="updateRequest()">
+        Save Changes
+      </button>
+
+    </div>
+
+  </div>
+
+</app-modal>
+
+<!--View-->
+<app-modal
+  [IsOpen]="showViewModal()"
+  (close)="closeViewModal()">
+
+
+  <!-- Header -->
+  <div modal-header>
+    <h2 class="text-xl font-semibold">Leave Request Details</h2>
+    <p class="text-sm text-gray-500">
+      View the details of your leave request.
+    </p>
+  </div>
+
+  <!-- Body -->
+  <div modal-body class="space-y-4">
+@if(selectedRequest()){
+    <div class="grid grid-cols-2 gap-4">
+
+      <div>
+        <p class="text-sm text-gray-500">Leave Type</p>
+        <p class="font-medium">{{ selectedRequest()?.leaveName }}</p>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-500">Status</p>
+        <span
+          class="inline-flex rounded-full px-3 py-1 text-sm font-medium"
+          [ngClass]="getColor(selectedRequest()!.status)">
+          {{ selectedRequest()!.status }}
+        </span>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-500">Request Date</p>
+        <p>{{ selectedRequest()?.requestDate | date }}</p>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-500">Processed Date</p>
+        <p>
+          {{ selectedRequest()?.processedDate
+              ? (selectedRequest()?.processedDate | date:'medium')
+              : 'Not processed yet' }}
+        </p>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-500">Start Date</p>
+        <p>{{ selectedRequest()?.startDate | date }}</p>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-500">End Date</p>
+        <p>{{ selectedRequest()?.endDate | date }}</p>
+      </div>
+
+      <div>
+        <p class="text-sm text-gray-500">Leave Days</p>
+        <p>{{ selectedRequest()?.leaveDays }}</p>
+      </div>
+
+    </div>
+
+    <hr>
+
+    <div>
+      <p class="text-sm text-gray-500 mb-1">Description</p>
+      <div class="rounded-md border bg-gray-50 p-3 min-h-20">
+        {{ selectedRequest()?.description || 'No description provided.' }}
+      </div>
+    </div>
+
+    @if(selectedRequest()?.status === 'Rejected') {
+      <div>
+        <p class="text-sm font-medium text-red-600 mb-1">
+          Rejection Reason
+        </p>
+
+        <div class="rounded-md border border-red-200 bg-red-50 p-3">
+          {{ selectedRequest()?.rejectionReason }}
+        </div>
+      </div>
+    }
+  }
+  </div>
+
+  <!-- Footer -->
+  <div modal-footer>
+@if(selectedRequest()){
+    <div class="flex gap-3">
+
+       @if(selectedRequest()!.status === 'Pending'){
+          <button (click)="openCancelModal(selectedRequest()!.id)"
+            class="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700">
+                Cancel
+          </button>
+        }
+
+         @if(selectedRequest()!.status === 'Pending'){
+
+            <button (click)="openUpdateModal(selectedRequest()!.id)"
+              class="rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600">
+                Edit
+            </button>
+                      
+          }
+      <button type="button"
+        class="rounded-md bg-gray-700 px-4 py-2 text-white hover:bg-gray-800"
+        (click)="closeViewModal()">
+          Close
+      </button>
+
+    </div>
+}
+  </div>
+
+</app-modal>
+
+<!--Create-->
+<app-modal
+  [IsOpen]="showCreateModal()"
+  (close)="closeCreateModal()">
+
+  <!-- Header -->
+  <div modal-header>
+    <h2 class="text-xl font-semibold">
+      Create Leave Request
+    </h2>
+
+    <p class="text-sm text-gray-500">
+      Submit a new leave request.
+    </p>
+  </div>
+
+  <!-- Body -->
+  <div modal-body class="space-y-4">
+
+    <!-- Leave Type -->
+    <div>
+      <label class="block text-sm font-medium mb-1">
+        Leave Type
+      </label>
+
+      <select
+        class="w-full rounded-md border p-2"
+        [ngModel]="selectedLeaveType()"
+        (ngModelChange)="selectedLeaveType.set($event)">
+
+        <option value="">Select Leave Type</option>
+
+        @for(type of leaveType; track type[1]){
+          <option [value]="type[1]">
+            {{ type[0] }}
+          </option>
+        }
+
+      </select>
+    </div>
+
+    <!-- Start Date -->
+    <div>
+      <label class="block text-sm font-medium mb-1">
+        Start Date
+      </label>
+
+      <input
+        type="date"
+        class="w-full rounded-md border p-2"
+        [ngModel]="createRequest().startDate"
+        (ngModelChange)="updateCreateStartDate($event)">
+    </div>
+
+    <!-- End Date -->
+    <div>
+      <label class="block text-sm font-medium mb-1">
+        End Date
+      </label>
+
+      <input
+        type="date"
+        class="w-full rounded-md border p-2"
+        [ngModel]="createRequest().endDate"
+        (ngModelChange)="updateCreateEndDate($event)">
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label class="block text-sm font-medium mb-1">
+        Description
+      </label>
+
+      <textarea
+        rows="4"
+        class="w-full rounded-md border p-2 resize-none"
+        [ngModel]="createRequest().description"
+        (ngModelChange)="updateCreateDescription($event)">
+      </textarea>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div modal-footer>
+
+    <button
+      class="border rounded-md px-4 py-2"
+      (click)="closeCreateModal()">
+      Cancel
+    </button>
+
+    <button
+      class="bg-blue-600 text-white rounded-md px-4 py-2"
+      (click)="createLeaveRequest()">
+      Submit Request
+    </button>
+
+  </div>
+
+</app-modal>
+
+<!--Cancel-->
+<app-modal
+  [IsOpen]="isCancelModalOpen"
+  (closeModal)="closeCancelModal()">
+
+  <!-- Header -->
+  <div modal-header>
+    <h2 class="text-xl font-semibold text-red-600">
+      Cancel Leave Request
+    </h2>
+  </div>
+
+  <!-- Body -->
+  <div modal-body>
+
+    <p class="text-gray-700">
+      Are you sure you want to cancel this leave request?
+    </p>
+
+    <p class="mt-2 text-sm text-gray-500">
+      This action cannot be undone.
+    </p>
+
+  </div>
+
+  <!-- Footer -->
+  <div modal-footer>
+
+    <button
+      class="border rounded-md px-4 py-2"
+      (click)="closeCancelModal()">
+      Keep Request
+    </button>
+
+    <button
+      class="bg-red-600 text-white rounded-md px-4 py-2"
+      (click)="cancelLeaveRequest()">
+      Cancel Request
+    </button>
+
+  </div>
+
+</app-modal>
+
 <div class="flex min-h-[calc(100dvh-64px)] bg-gray-100 font-stack">
   <main class="flex-1 p-8">
 
@@ -44,7 +395,7 @@
       <div class="rounded-xl bg-white p-6 shadow">
         <p class="text-gray-500">Pending</p>
         <h3 class="mt-2 text-4xl font-bold text-yellow-500">
-          @if(query.DashboardData()){
+          @if(query.EmployeeDashBoardData()){
             {{ totalPendingRequest() }}
           }@else{
             0
@@ -55,7 +406,7 @@
       <div class="rounded-xl bg-white p-6 shadow">
         <p class="text-gray-500">Approved</p>
         <h3 class="mt-2 text-4xl font-bold text-green-600">
-          @if(query.DashboardData()){
+          @if(query.EmployeeDashBoardData()){
             {{ totalApprovedRequest() }}
           }@else{
             0
@@ -66,7 +417,7 @@
       <div class="rounded-xl bg-white p-6 shadow">
         <p class="text-gray-500">Rejected</p>
         <h3 class="mt-2 text-4xl font-bold text-red-600">
-          @if(query.DashboardData(); as Dashboard){
+          @if(query.EmployeeDashBoardData()){
             {{ totalRejectedRequest() }}
           }@else{
             0
@@ -96,29 +447,29 @@
 
           <thead>
 
-            <tr class="bg-gray-100">
+            <tr class="">
 
-              <th class="sticky top-0 px-6 py-3 text-center">
+              <th class="sticky bg-gray-100 top-0 px-6 py-3 text-center">
                 Leave Type
               </th>
 
-              <th class="sticky top-0 px-6 py-3 text-center">
+              <th class="sticky bg-gray-100 top-0 px-6 py-3 text-center">
                 Date Filed
               </th>
 
-              <th class="sticky top-0 px-6 py-3 text-center">
+              <th class="sticky bg-gray-100 top-0 px-6 py-3 text-center">
                 Start Date
               </th>
 
-              <th class="sticky top-0 px-6 py-3 text-center">
+              <th class="sticky bg-gray-100 top-0 px-6 py-3 text-center">
                 End Date
               </th>
 
-              <th class="sticky top-0 px-6 py-3 text-center">
+              <th class="sticky bg-gray-100 top-0 px-6 py-3 text-center">
                 Status
               </th>
 
-              <th class="sticky top-0 px-6 py-3 text-center">
+              <th class="sticky bg-gray-100 top-0 px-6 py-3 text-center">
                 Actions
               </th>
 
@@ -164,28 +515,14 @@
 
                   <div class="flex justify-center gap-2">
 
+                   
+
                     <button
                       (click)="openViewModal(request.id)"
                       class="rounded bg-blue-600 px-3 py-1 text-white hover:bg-blue-700">
                       View
                     </button>
-
-                    @if(request.status === 'Pending'){
-
-                    <button
-                      (click)="openUpdateModal(request.id)"
-                      class="rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600">
-                      Edit
-                    </button>
-
-                    <button
-                      (click)="openCancelModal(request.id)"
-                      class="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700">
-                      Cancel
-                    </button>
-
-                    }
-
+                    
                   </div>
 
                 </td>

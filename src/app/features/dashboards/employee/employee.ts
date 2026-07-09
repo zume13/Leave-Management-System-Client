@@ -1,15 +1,18 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, effect } from '@angular/core';
 import { Queryservice } from '../../../core/services/queryservice';
 import { RequestsCommandService } from '../../../core/services/requests-command-service';
 import { AuthService } from '../../../core/services/auth-service';
 import { ToastService } from '../../../core/services/toast-service';
 import { ToastContainer } from "../../../shared/components/toast-container/toast-container";
 import { HttpErrorResponse } from '@angular/common/http';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
+import { Modal } from '../../../shared/modal/modal';
+import { GetAllRequestsByEmployeeDto, UpdateLeaveRequestCommand } from '../../../shared/models/query';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-employee',
-  imports: [ToastContainer, DatePipe],
+  imports: [ToastContainer, DatePipe, Modal, FormsModule, NgClass],
   templateUrl: './employee.html',
   styleUrl: './employee.css',
 })
@@ -19,7 +22,13 @@ export class Employee implements OnInit{
   command = inject(RequestsCommandService);
   auth = inject(AuthService);
   toast = inject(ToastService);
-
+  leaveType = new Map<string, string> ([
+    ["Vacation Leave", "DECC14C1-2016-4622-B238-13232EE54D1B"],
+    ["Maternity Leave", "EBF174D3-D5BD-4976-B7DC-CE1DEA47D287"],
+    ["Sick Leave", "BB1A0633-F67D-4D19-A1F5-F6F114D5FA41"]
+  ]);
+  selectedLeaveType = signal<string | null>(null);
+      
   ngOnInit(): void {
     if(this.query.EmployeeDashBoardData()){
       return;
@@ -29,25 +38,59 @@ export class Employee implements OnInit{
   }
 
   totalRequests = computed(() => {
-    return this.query.EmployeeDashBoardData()?.length ?? 0;
+    const requests = this.query.EmployeeDashBoardData() ?? [];
+    return requests.length 
   });
 
   totalPendingRequest = computed(() => {
-    return this.query.EmployeeDashBoardData()?.filter(value => value.status === 'Pending').length ?? 0;
+    const requests = this.query.EmployeeDashBoardData() ?? [];
+
+    return requests.filter(x => x.status === 'Pending').length;
   });
 
   totalApprovedRequest = computed(() => {
-    return this.query.EmployeeDashBoardData()?.filter(value => value.status === 'Approved').length ?? 0;
+    const requests = this.query.EmployeeDashBoardData() ?? [];
+    return requests.filter(value => value.status === 'Approved').length 
   });
 
   totalRejectedRequest = computed(() => {
-    return this.query.EmployeeDashBoardData()?.filter(value => value.status === 'Rejected').length ?? 0;
+    const requests = this.query.EmployeeDashBoardData()?.filter(value => value.status === 'Rejected') ?? [];
+    return requests.filter(value => value.status === 'Rejected').length 
   });
 
   showCreateModal = signal<boolean>(false);
   showUpdateModal = signal<boolean>(false);
   showCancelModal = signal<boolean>(false);
   showViewModal = signal<boolean>(false);
+
+  updateModalValues = signal<UpdateLeaveRequestCommand>({
+                        leaveRequestId: '',
+                        newStartDate: '',
+                        newEndDate: '',
+                        newDescription: ''
+                      });
+  selectedRequest = signal<GetAllRequestsByEmployeeDto | null>(null);
+
+updateStartDate(date: string) {
+  this.updateModalValues.update(value => ({
+    ...value,
+    newStartDate: date
+  }));
+}
+
+updateEndDate(date: string) {
+  this.updateModalValues.update(value => ({
+    ...value,
+    newEndDate: date
+  }));
+}
+
+updateDescription(description: string) {
+  this.updateModalValues.update(value => ({
+    ...value,
+    newDescription: description
+  }));
+}
 
   getEmployeeRequests(){
 
@@ -58,7 +101,6 @@ export class Employee implements OnInit{
 
     this.query.getAllEmployeeRequestsById(this.auth.currentUser()!.id).subscribe({
       next : (response) => {
-        console.log(response);
         this.query.EmployeeDashBoardData.set(response);
       },
       error : (err : HttpErrorResponse) => {
@@ -72,12 +114,41 @@ export class Employee implements OnInit{
   }
   openUpdateModal(requestId : string){
     this.showUpdateModal.set(true);
+    this.closeViewModal();
   }
   openCancelModal(requestId : string){
+    this.closeViewModal();
     this.showCancelModal.set(true);
   }
   openViewModal(requestId : string){
+    const matched = 
+      this.query.EmployeeDashBoardData()?.find(
+        value => value.id === requestId);
+
+    if(!matched){
+      return
+    }
+
+    this.selectedRequest.set(matched);
+    
     this.showViewModal.set(true);
+  }
+
+  closeCreateModal(){
+    this.showCreateModal.set(false);
+  }
+  closeUpdateModal(){
+    this.showUpdateModal.set(false);
+  }
+  closeCancelModal(){
+    this.showCancelModal.set(false);
+  }
+  closeViewModal(){
+    this.showViewModal.set(false);
+  }
+
+  updateRequest(){
+
   }
 
   getColor(status : string){

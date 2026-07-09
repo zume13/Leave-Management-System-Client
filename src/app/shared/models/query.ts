@@ -37,7 +37,6 @@ export interface LeavesDto{
 
 export interface GetAllRequestsByEmployeeDto {
   id: string;
-  employeeName: string;
   leaveName : string;
   requestDate: string;
   processedDate: string | null;
@@ -48,4 +47,11 @@ export interface GetAllRequestsByEmployeeDto {
   description: string | null;
   rejectionReason: string | null;
   processedBy: string | null;
+}
+
+export interface UpdateLeaveRequestCommand {
+  leaveRequestId: string;
+  newStartDate: string;
+  newEndDate: string;
+  newDescription: string;
 }
