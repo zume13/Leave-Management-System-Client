@@ -20,45 +20,72 @@
   <div modal-body class="space-y-4">
 
     <!-- Start Date -->
-    <div>
-      <label class="block text-sm font-medium mb-1">
-        Start Date
-      </label>
+  <form [formGroup]="updateForm">
+  <!-- Start Date -->
+  <div>
+    <label class="block text-sm font-medium mb-1">
+      Start Date
+    </label>
 
-      <input
-        type="date"
-        class="w-full rounded-md border p-2 cursor-pointer"
-        [ngModel]="updateModalValues()!.newStartDate"
-        (ngModelChange)="updateStartDate($event)">
-    </div>
+    <input
+      type="date"
+      class="w-full rounded-md border p-2 cursor-pointer"
+      formControlName="startDate">
 
-    <!-- End Date -->
-    <div>
-      <label class="block text-sm font-medium mb-1">
-        End Date
-      </label>
+    @if (
+      updateForm.controls.startDate.touched &&
+      updateForm.controls.startDate.hasError('required')
+    ) {
+      <div class="mt-1 text-sm text-red-600">
+        Start date is required.
+      </div>
+    }
+  </div>
 
-      <input
-        type="date"
-        class="w-full rounded-md border p-2 cursor-pointer"
-        [ngModel]="updateModalValues().newEndDate"
-        (ngModelChange)="updateEndDate($event)">
-    </div>
+  <!-- End Date -->
+  <div>
+    <label class="block text-sm font-medium mb-1">
+      End Date
+    </label>
 
-    <!-- Description -->
-    <div>
-      <label class="block text-sm font-medium mb-1">
-        Description
-      </label>
+    <input
+      type="date"
+      class="w-full rounded-md border p-2 cursor-pointer"
+      formControlName="endDate">
 
-      <textarea
-        rows="4"
-        class="w-full rounded-md border p-2 resize-none"
-        placeholder="Reason for leave..."
-        [ngModel]="updateModalValues().newDescription"
-        (ngModelChange)="updateDescription($event)">
-      </textarea>
-    </div>
+    @if (
+      updateForm.controls.endDate.touched &&
+      updateForm.controls.endDate.hasError('required')
+    ) {
+      <div class="mt-1 text-sm text-red-600">
+        End date is required.
+      </div>
+    }
+  </div>
+
+  <!-- Description -->
+  <div>
+    <label class="block text-sm font-medium mb-1">
+      Description
+    </label>
+
+    <textarea
+      rows="4"
+      class="w-full rounded-md border p-2 resize-none"
+      placeholder="Reason for leave..."
+      formControlName="description">
+    </textarea>
+
+    @if (
+      updateForm.controls.description.touched &&
+      updateForm.controls.description.hasError('required')
+    ) {
+      <div class="mt-1 text-sm text-red-600">
+        Description is required.
+      </div>
+    }
+  </div>
+</form>
 
   </div>
 
@@ -181,7 +208,7 @@
 
        @if(selectedRequest()!.status === 'Pending'){
           <button (click)="openCancelModal(selectedRequest()!.id)"
-            class="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700">
+            class="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700 cursor-pointer">
                 Cancel
           </button>
         }
@@ -189,13 +216,13 @@
          @if(selectedRequest()!.status === 'Pending'){
 
             <button (click)="openUpdateModal(selectedRequest()!.id)"
-              class="rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600">
+              class="rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600 cursor-pointer">
                 Edit
             </button>
                       
           }
       <button type="button"
-        class="rounded-md bg-gray-700 px-4 py-2 text-white hover:bg-gray-800"
+        class="rounded-md bg-gray-700 px-4 py-2 text-white hover:bg-gray-800 cursor-pointer"
         (click)="closeViewModal()">
           Close
       </button>
@@ -206,112 +233,10 @@
 
 </app-modal>
 
-<!--Create-->
-<app-modal
-  [IsOpen]="showCreateModal()"
-  (close)="closeCreateModal()">
-
-  <!-- Header -->
-  <div modal-header>
-    <h2 class="text-xl font-semibold">
-      Create Leave Request
-    </h2>
-
-    <p class="text-sm text-gray-500">
-      Submit a new leave request.
-    </p>
-  </div>
-
-  <!-- Body -->
-  <div modal-body class="space-y-4">
-
-    <!-- Leave Type -->
-    <div>
-      <label class="block text-sm font-medium mb-1">
-        Leave Type
-      </label>
-
-      <select
-        class="w-full rounded-md border p-2"
-        [ngModel]="selectedLeaveType()"
-        (ngModelChange)="selectedLeaveType.set($event)">
-
-        <option value="">Select Leave Type</option>
-
-        @for(type of leaveType; track type[1]){
-          <option [value]="type[1]">
-            {{ type[0] }}
-          </option>
-        }
-
-      </select>
-    </div>
-
-    <!-- Start Date -->
-    <div>
-      <label class="block text-sm font-medium mb-1">
-        Start Date
-      </label>
-
-      <input
-        type="date"
-        class="w-full rounded-md border p-2"
-        [ngModel]="createRequest().startDate"
-        (ngModelChange)="updateCreateStartDate($event)">
-    </div>
-
-    <!-- End Date -->
-    <div>
-      <label class="block text-sm font-medium mb-1">
-        End Date
-      </label>
-
-      <input
-        type="date"
-        class="w-full rounded-md border p-2"
-        [ngModel]="createRequest().endDate"
-        (ngModelChange)="updateCreateEndDate($event)">
-    </div>
-
-    <!-- Description -->
-    <div>
-      <label class="block text-sm font-medium mb-1">
-        Description
-      </label>
-
-      <textarea
-        rows="4"
-        class="w-full rounded-md border p-2 resize-none"
-        [ngModel]="createRequest().description"
-        (ngModelChange)="updateCreateDescription($event)">
-      </textarea>
-    </div>
-
-  </div>
-
-  <!-- Footer -->
-  <div modal-footer>
-
-    <button
-      class="border rounded-md px-4 py-2"
-      (click)="closeCreateModal()">
-      Cancel
-    </button>
-
-    <button
-      class="bg-blue-600 text-white rounded-md px-4 py-2"
-      (click)="createLeaveRequest()">
-      Submit Request
-    </button>
-
-  </div>
-
-</app-modal>
-
 <!--Cancel-->
 <app-modal
-  [IsOpen]="isCancelModalOpen"
-  (closeModal)="closeCancelModal()">
+  [IsOpen]="showCancelModal()"
+  (close)="closeCancelModal()">
 
   <!-- Header -->
   <div modal-header>
@@ -336,24 +261,26 @@
   <!-- Footer -->
   <div modal-footer>
 
-    <button
-      class="border rounded-md px-4 py-2"
-      (click)="closeCancelModal()">
-      Keep Request
-    </button>
+    <div class="flex gap-3">
+      <button
+        class="border rounded-md px-4 py-2 cursor-pointer"
+        (click)="closeCancelModal()">
+        Keep Request
+      </button>
 
-    <button
-      class="bg-red-600 text-white rounded-md px-4 py-2"
-      (click)="cancelLeaveRequest()">
-      Cancel Request
-    </button>
+      <button
+        class="bg-red-600 text-white rounded-md px-4 py-2 cursor-pointer"
+        (click)="cancelLeaveRequest()">
+        Cancel Request
+      </button>
+    </div>
 
   </div>
 
 </app-modal>
 
-<div class="flex min-h-[calc(100dvh-64px)] bg-gray-100 font-stack">
-  <main class="flex-1 p-8">
+<div class="flex max-h-[calc(100dvh-64px)] overflow-hidden bg-gray-100 font-stack">
+  <main class="p-8 flex-1 flex flex-col min-h-0">
 
     <!-- Header -->
     <div class="mb-8 flex items-center justify-between">
@@ -366,16 +293,6 @@
         </p>
       </div>
 
-      <!-- Quick Actions -->
-      <div class="flex">
-
-        <button
-          (click)="openCreateModal()"
-          class="rounded-lg bg-blue-600 px-5 py-2 text-white shadow hover:bg-blue-700 transition cursor-pointer">
-          + Create Request
-        </button>
-
-      </div>
     </div>
 
     <!-- My Requests Stats -->
@@ -428,7 +345,7 @@
     </div>
 
     <!-- My Recent Requests -->
-    <div class="mt-10 rounded-xl bg-white shadow">
+    <div class="mt-10 rounded-xl bg-white shadow flex-1 flex flex-col min-h-0">
 
       <div class="flex items-center justify-between border-b p-6">
         <div>
@@ -441,7 +358,7 @@
         </div>
       </div>
 
-      <div class="max-h-107.5 overflow-y-auto overflow-x-auto">
+      <div class="flex-1 overflow-y-auto overflow-x-auto custom-scrollbar">
 
         <table class="min-w-full">
 
@@ -483,7 +400,7 @@
 
               @for(request of query.EmployeeDashBoardData(); track request.id){
 
-              <tr class="border-b hover:bg-gray-50">
+              <tr class="hover:bg-gray-50 border-y border-gray-300">
 
                 <td class="px-6 py-4 text-center">
                   {{ request.leaveName }}
@@ -519,7 +436,7 @@
 
                     <button
                       (click)="openViewModal(request.id)"
-                      class="rounded bg-blue-600 px-3 py-1 text-white hover:bg-blue-700">
+                      class="rounded bg-blue-600 px-3 py-1 text-white hover:bg-blue-700 cursor-pointer">
                       View
                     </button>
                     

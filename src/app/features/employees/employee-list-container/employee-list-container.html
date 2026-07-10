@@ -69,8 +69,8 @@
 </app-modal>
 
 
-<div class="flex min-h-[calc(100dvh-64px)] bg-gray-100 font-stack">
-  <main class="flex-1 p-8">
+<div class="flex h-[calc(100dvh-64px)] bg-gray-100 font-stack">
+  <main class="flex-1 p-8 flex flex-col min-h-0">
 
     <!-- Header -->
     <div class="mb-8 flex items-center justify-between">
@@ -85,7 +85,7 @@
     </div>
 
     <!-- Employee Table -->
-    <div class="rounded-xl bg-white shadow">
+    <div class="rounded-xl bg-white shadow flex flex-col flex-1 min-h-0">
 
       <div class="border-b p-6 flex justify-between items-start flex-wrap gap-6">
 
@@ -167,7 +167,7 @@
 
 </div>
 
-      <div class="max-h-125 overflow-auto">
+      <div class="flex flex-col flex-1 min-h-0 overflow-auto custom-scrollbar">
 
         <table class="min-w-full">
 
@@ -237,7 +237,6 @@
                 </tr>
 
               }
-
             } @else if (selectedFilter() === 'name' && query.Employees().length > 0) {
 
               @for(employee of query.Employees(); track employee.id){

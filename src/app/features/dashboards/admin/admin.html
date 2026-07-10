@@ -192,8 +192,8 @@
 
 </app-modal>
 
-<div class="flex min-h-[calc(100dvh-64px)] bg-gray-100 font-stack">
-  <main class="flex-1 p-8">
+<div class="flex max-h-[calc(100dvh-64px)] bg-gray-100 font-stack">
+  <main class="flex-1 p-8 flex flex-col min-h-0">
 
     <!-- Header -->
     <div class="mb-8 flex items-center justify-between">
@@ -257,14 +257,14 @@
     </div>
 
     <!-- Recent Requests -->
-   <div class="mt-10 rounded-xl bg-white shadow">
+   <div class="mt-10 rounded-xl bg-white shadow flex flex-col flex-1 min-h-0">
       <div class="border-b p-6">
         <h3 class="text-xl font-semibold">
           Recent Leave Requests
         </h3>
       </div>
 
-    <div class="overflow-x-auto h-83 max-h-83">
+    <div class="overflow-x-auto flex-1 custom-scrollbar">
 
         <table class="min-w-full">
           

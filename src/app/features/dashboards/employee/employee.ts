@@ -8,11 +8,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe, NgClass } from '@angular/common';
 import { Modal } from '../../../shared/modal/modal';
 import { GetAllRequestsByEmployeeDto, UpdateLeaveRequestCommand } from '../../../shared/models/query';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ProblemDetails } from '../../../shared/models/auth';
 
 @Component({
   selector: 'app-employee',
-  imports: [ToastContainer, DatePipe, Modal, FormsModule, NgClass],
+  imports: [ToastContainer, DatePipe, Modal, FormsModule, NgClass, ReactiveFormsModule],
   templateUrl: './employee.html',
   styleUrl: './employee.css',
 })
@@ -22,12 +23,13 @@ export class Employee implements OnInit{
   command = inject(RequestsCommandService);
   auth = inject(AuthService);
   toast = inject(ToastService);
-  leaveType = new Map<string, string> ([
+  builder = inject(FormBuilder);
+
+  leaveTypes = new Map<string, string> ([
     ["Vacation Leave", "DECC14C1-2016-4622-B238-13232EE54D1B"],
     ["Maternity Leave", "EBF174D3-D5BD-4976-B7DC-CE1DEA47D287"],
     ["Sick Leave", "BB1A0633-F67D-4D19-A1F5-F6F114D5FA41"]
   ]);
-  selectedLeaveType = signal<string | null>(null);
       
   ngOnInit(): void {
     if(this.query.EmployeeDashBoardData()){
@@ -63,34 +65,12 @@ export class Employee implements OnInit{
   showCancelModal = signal<boolean>(false);
   showViewModal = signal<boolean>(false);
 
-  updateModalValues = signal<UpdateLeaveRequestCommand>({
-                        leaveRequestId: '',
-                        newStartDate: '',
-                        newEndDate: '',
-                        newDescription: ''
-                      });
+  updateForm = this.builder.nonNullable.group({
+    startDate: ['', [Validators.required]],
+    endDate: ['', [Validators.required]],
+    description: ['', [Validators.required]]
+  });
   selectedRequest = signal<GetAllRequestsByEmployeeDto | null>(null);
-
-updateStartDate(date: string) {
-  this.updateModalValues.update(value => ({
-    ...value,
-    newStartDate: date
-  }));
-}
-
-updateEndDate(date: string) {
-  this.updateModalValues.update(value => ({
-    ...value,
-    newEndDate: date
-  }));
-}
-
-updateDescription(description: string) {
-  this.updateModalValues.update(value => ({
-    ...value,
-    newDescription: description
-  }));
-}
 
   getEmployeeRequests(){
 
@@ -149,6 +129,56 @@ updateDescription(description: string) {
 
   updateRequest(){
 
+    const { startDate, endDate, description } = this.updateForm.getRawValue();
+
+    if(this.updateForm.invalid){
+      this.updateForm.markAllAsTouched();
+      console.log('form');
+      return
+    }
+
+    const requestId = this.selectedRequest()?.id;
+
+    if(!requestId){
+      console.log('i');
+      return
+    }
+
+    this.command.updateLeaveRequest(requestId, startDate, endDate, description).subscribe({
+      next : () => {
+        this.toast.show('Updated leave request', 'success');
+        this.getEmployeeRequests();
+        this.closeUpdateModal();
+      },
+      error : (err : HttpErrorResponse) => {
+        const problem = err.error as ProblemDetails
+
+        this.toast.show(problem.detail, 'error');
+        this.closeUpdateModal();
+      }
+    })
+  }
+
+  cancelLeaveRequest(){
+
+    const id = this.selectedRequest()?.id;
+
+    if(!id){
+      return 
+    }
+    this.command.cancelRequest(id).subscribe({
+      next : () => {
+        this.toast.show('Cancelled leave request', 'success');
+        this.getEmployeeRequests();
+        this.closeCancelModal();
+      },
+      error : (err : HttpErrorResponse) => {
+        const problem = err.error as ProblemDetails
+
+        this.toast.show(problem.detail, 'error');
+        this.closeCancelModal();
+      }
+  })
   }
 
   getColor(status : string){

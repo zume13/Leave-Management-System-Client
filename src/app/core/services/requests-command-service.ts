@@ -31,7 +31,6 @@ export class RequestsCommandService {
 
   updateLeave(leaveId : string, leaveName : string, leaveDays : number){
 
-    console.log('ror');
     return this.http.put(`${this.baseUrl}/leave-management/leave-type/update`, {
        LeaveTypeId : leaveId, 
        NewName : leaveName,
@@ -48,6 +47,31 @@ export class RequestsCommandService {
         Name : leaveName,
         DefaultDays : leaveDays
     });
+  }
+
+  createRequest(startDate : string, endDate : string, description : string,employeeId : string, leaveTypeId : string){
+    return this.http.post(`${this.baseUrl}/leave-management/leave-request/create`, {
+      startDate : startDate,
+      endDate : endDate,
+      description : description,
+      employeeId : employeeId,
+      leaveTypeId : leaveTypeId
+    });
+  }
+
+  cancelRequest(requestId : string){
+    return this.http.post(`${this.baseUrl}/leave-management/leave-request/cancel`, {
+      LeaveRequestId : requestId
+    })
+  }
+
+  updateLeaveRequest(requestId : string, startDate : string, endDate : string, description : string){
+    return this.http.put(`${this.baseUrl}/leave-management/leave-request/update`, {
+      LeaveRequestId  :requestId, 
+      newStartDate : startDate, 
+      newEndDate : endDate, 
+      newDescription : description
+    })
   }
   
 }

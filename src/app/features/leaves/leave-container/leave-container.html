@@ -205,9 +205,9 @@
 
 </app-modal>
 
-<div class="flex min-h-[calc(100dvh-64px)] bg-gray-100 font-stack">
+<div class="flex h-[calc(100dvh-64px)] bg-gray-100 font-stack">
 
-    <main class="flex-1 p-8">
+    <main class="flex-1 p-8 flex flex-col min-h-0">
 
         <!-- Header -->
         <div class="mb-8 flex items-center justify-between">
@@ -227,7 +227,7 @@
         </div>
 
         <!-- Leave Type Table -->
-        <div class="flex max-h-140 flex-col rounded-xl bg-white shadow">
+        <div class="mt-10 rounded-xl bg-white shadow flex flex-col flex-1 min-h-0">
 
             <div class="flex flex-wrap items-center justify-between gap-4 border-b p-6">
 
@@ -245,7 +245,7 @@
 
             </div>
 
-            <div class="flex-1 overflow-y-auto">
+            <div class="overflow-x-auto flex-1 custom-scrollbar">
 
                 <table class="min-w-full">
 
