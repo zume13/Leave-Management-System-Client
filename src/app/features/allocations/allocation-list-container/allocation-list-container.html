@@ -1,1 +1,129 @@
-<p>allocation-list-container works!</p>
+<app-toast-container>
+</app-toast-container>
+
+<div class="rounded-xl border border-gray-200 bg-white shadow-sm">
+
+  <!-- Header -->
+  <div class="border-b border-gray-200 px-6 py-4">
+    <h2 class="text-xl font-semibold text-gray-900">
+      Leave Allocations
+    </h2>
+
+    <p class="mt-1 text-sm text-gray-500">
+      Select an allocation to create a leave request.
+    </p>
+  </div>
+
+  @if (query.Allocations().length < 1) {
+
+    <div class="flex justify-center py-12">
+      <div
+        class="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent">
+      </div>
+    </div>
+
+  } @else if (query.Allocations().length === 0) {
+
+    <div class="py-12 text-center text-gray-500">
+      No leave allocations found.
+    </div>
+
+  } @else {
+
+    <div class="overflow-x-auto">
+
+      <table class="min-w-full divide-y divide-gray-200">
+
+        <thead class="bg-gray-50">
+
+          <tr>
+
+            <th
+              class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Leave Type
+            </th>
+
+            <th
+              class="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Remaining Days
+            </th>
+
+            <th
+              class="px-6 py-3 text-center text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Year
+            </th>
+
+            <th
+              class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Action
+            </th>
+
+          </tr>
+
+        </thead>
+
+        <tbody class="divide-y divide-gray-100 bg-white">
+
+          @for (allocation of query.Allocations(); track allocation.allocationId) {
+
+            <tr class="transition-colors hover:bg-gray-50">
+
+              <td class="px-6 py-4">
+
+                <div class="font-medium text-gray-900">
+                  {{ allocation.leaveName }}
+                </div>
+
+              </td>
+
+              <td class="px-6 py-4 text-center">
+
+                <span
+                  class="inline-flex rounded-full px-3 py-1 text-xs font-semibold"
+
+                  [class]="
+                    allocation.leaveBalance === 0
+                      ? 'bg-red-100 text-red-700'
+                      : allocation.leaveBalance <= 3
+                      ? 'bg-yellow-100 text-yellow-700'
+                      : 'bg-green-100 text-green-700'
+                  ">
+
+                  {{ allocation.leaveBalance }} Days
+
+                </span>
+
+              </td>
+
+              <td class="px-6 py-4 text-center text-gray-700">
+
+                {{ allocation.yearOfValidity }}
+
+              </td>
+
+              <td class="px-6 py-4 text-right">
+
+                <button
+                  type="button"
+                  [disabled]="allocation.leaveBalance === 0"
+                  class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-gray-300">
+
+                  Use Allocation
+
+                </button>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  }
+
+</div>

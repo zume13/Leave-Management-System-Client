@@ -55,3 +55,10 @@ export interface UpdateLeaveRequestCommand {
   newEndDate: string;
   newDescription: string;
 }
+
+export interface GetAllocationByEmployeeDto {
+  allocationId: string;
+  leaveName: string;
+  leaveBalance: number;
+  yearOfValidity: number;
+}
