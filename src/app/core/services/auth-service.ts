@@ -60,10 +60,11 @@ export class AuthService {
         if(IsExpired){
           const refreshed = await this.refreshToken()
           if(!refreshed){
-            this.logout()
+             this.clearToken();
+             this.router.navigateByUrl('/login')
             return
           }
-          return this.restoreUser();
+          return  await this.restoreUser();
         }
 
       this.currentUser.set({
@@ -74,7 +75,8 @@ export class AuthService {
       });
 
     } catch {
-      this.logout();
+      this.clearToken();
+      this.router.navigateByUrl('/login')
     }
   }
 
@@ -101,7 +103,6 @@ export class AuthService {
       return true
     }catch{
       return false
-
     }
   }
 

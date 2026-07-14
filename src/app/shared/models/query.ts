@@ -61,4 +61,5 @@ export interface GetAllocationByEmployeeDto {
   leaveName: string;
   leaveBalance: number;
   yearOfValidity: number;
+  leaveTypeId : string
 }
