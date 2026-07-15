@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Header } from './shared/components/header/header';
 import { ToastContainer } from './shared/components/toast-container/toast-container';
@@ -14,9 +14,11 @@ import { SpinnerComponent } from "./shared/components/spinner-component/spinner-
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
+export class App implements OnInit {
   protected title = 'LeaveManagementClient';
 
   auth = inject(AuthService);
-
+  async ngOnInit(): Promise<void> {
+    this.auth.restoreUser();
+  }
 }

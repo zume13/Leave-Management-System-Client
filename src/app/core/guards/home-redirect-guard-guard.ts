@@ -12,7 +12,7 @@ export const homeRedirectGuardGuard: CanActivateFn = (route, state) => {
 
   const role = auth.getRole();
 
-  return role === 'Admin' || 'Manager' ? 
+  return role === 'Admin' || role === 'Manager' ? 
     router.createUrlTree(['/admin/dashboard']) 
     : router.createUrlTree(['/employee/dashboard']);
 };

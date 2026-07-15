@@ -17,9 +17,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(authReq).pipe(
       catchError((err : HttpErrorResponse) => {
         if(err.status === 401 && !req.url.includes('/auth/refresh-token')){
+          console.log('error');
+
           return from(auth.refreshToken()).pipe(
             switchMap(refreshed => {
               if(!refreshed){
+                console.log('cleared token');
                 auth.clearToken();
                 router.navigateByUrl('/login');
                 return throwError(() => err);

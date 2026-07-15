@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, OnInit, signal } from '@angular/core';
 import { User } from '../../shared/models/auth';
 import { jwtDecode } from 'jwt-decode'
 import { accessTokenPayload, authResponse, logInRequest, registerRequest } from '../../shared/models/auth';
@@ -10,7 +10,7 @@ import { environment } from '../../../environments/environment.development';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class AuthService{
 
   http = inject(HttpClient)
   router = inject(Router)
@@ -23,7 +23,6 @@ export class AuthService {
   readonly isLoggedIn = computed(() => this._token() !== null);
 
   constructor(){
-    this.restoreUser();
     window.addEventListener('storage', () => {
         this._token.set(localStorage.getItem('accessToken'));
       });
@@ -94,6 +93,8 @@ export class AuthService {
   }
 
   async doRefresh() : Promise<boolean> {
+    console.log('refresh called')
+
     try{
       const response = await firstValueFrom(
         this.http.post<authResponse>(`${this.baseUrl}/leave-management/employee/auth/refresh-token`, {}, {withCredentials : true})
@@ -101,7 +102,8 @@ export class AuthService {
 
       this.setToken(response.accessToken);
       return true
-    }catch{
+    }catch(err){
+      console.error(err)
       return false
     }
   }

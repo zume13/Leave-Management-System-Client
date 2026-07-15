@@ -17,7 +17,7 @@ import { ProblemDetails } from '../../../shared/models/auth';
   templateUrl: './employee.html',
   styleUrl: './employee.css',
 })
-export class Employee implements OnInit{
+export class Employee{
 
   query = inject(Queryservice);
   command = inject(RequestsCommandService);
@@ -31,12 +31,17 @@ export class Employee implements OnInit{
     ["Sick Leave", "BB1A0633-F67D-4D19-A1F5-F6F114D5FA41"]
   ]);
       
-  ngOnInit(): void {
-    if(this.query.EmployeeDashBoardData()){
+  constructor() {
+    effect(() => {
+       const user = this.auth.currentUser();
+
+    if (!user) {
+      console.error('User not found');
       return;
     }
 
-    this.getEmployeeRequests();
+    this.getEmployeeRequests(user.id);
+    })
   }
 
   totalRequests = computed(() => {
@@ -72,14 +77,13 @@ export class Employee implements OnInit{
   });
   selectedRequest = signal<GetAllRequestsByEmployeeDto | null>(null);
 
-  getEmployeeRequests(){
+  getEmployeeRequests(userId : string){
 
-    if(this.auth.currentUser()?.id === null){
-      console.error('Id not found');
+    if(this.query.EmployeeDashBoardData()){
       return;
     }
 
-    this.query.getAllEmployeeRequestsById(this.auth.currentUser()!.id).subscribe({
+    this.query.getAllEmployeeRequestsById(userId).subscribe({
       next : (response) => {
         this.query.EmployeeDashBoardData.set(response);
       },
@@ -147,7 +151,7 @@ export class Employee implements OnInit{
     this.command.updateLeaveRequest(requestId, startDate, endDate, description).subscribe({
       next : () => {
         this.toast.show('Updated leave request', 'success');
-        this.getEmployeeRequests();
+        this.getEmployeeRequests(this.auth.currentUser()!.id);
         this.closeUpdateModal();
       },
       error : (err : HttpErrorResponse) => {
@@ -169,7 +173,7 @@ export class Employee implements OnInit{
     this.command.cancelRequest(id).subscribe({
       next : () => {
         this.toast.show('Cancelled leave request', 'success');
-        this.getEmployeeRequests();
+        this.getEmployeeRequests(this.auth.currentUser()!.id);
         this.closeCancelModal();
       },
       error : (err : HttpErrorResponse) => {
